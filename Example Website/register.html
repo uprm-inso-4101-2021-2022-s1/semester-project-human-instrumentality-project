@@ -11,13 +11,56 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
     </head>
 
-
     <body>
         <nav class ="navbar">
-            <div class ="topbar_container">
+            <div class ="navbar_container">
+                <a href="/" id="navbar_logo">HIP</a>
+                <ul class="navbar_menu">
+                    <li class="navbar_item">
+                        <a href="aboutus.html" class="navbar_links">About us</a>
+                    </li>
+                    <li class="navbar_item">
+                        <a href="faq.html" class="navbar_links"> FAQ </a>
+                    </li>
+                    <li class="navbar_btn">
+                        <a href="login.html" class="button"> Log in </a>
+                    </li>
+                    <li class="navbar_btn">
+                        <a href="register.html" class="button disabled"> Register </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
 
-                <text class="">Register a new account!</text>
-        </div>
+    <form action="action_page.php" style="border:1px solid #ccc">
+    <div class="container">
+      <h1 style="color:white;">Sign Up</h1>
+      <br>
+
+      <p style="color:white;>Please fill in this form to create an account.</p>
+      <hr>
+  
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" name="email" required>
+  
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+  
+      <label for="psw-repeat"><b>Repeat Password</b></label>
+      <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+      <br>
+
+  
+      <label>
+        <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+      </label>
     
-    </body>
+      <div class="clearfix">
+        <button type="button" class="cancelbtn">Cancel</button>
+        <button type="submit" class="signupbtn">Sign Up</button>
+      </div>
+    </div>
+  </form>
+</body>
 </html>
