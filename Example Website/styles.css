@@ -96,6 +96,11 @@ body {
     width: 100%;
 }
 
+.disabled {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
 .button {
     display: flex;
     justify-content: center;
