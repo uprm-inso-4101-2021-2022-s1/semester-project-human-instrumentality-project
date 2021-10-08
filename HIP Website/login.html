@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HIP Website</title>
+        <link   rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    </head>
+
+
+    <body>
+      <nav class ="navbar">
+        <div class ="navbar_container">
+            <a href="index.html" id="navbar_logo">HIP</a>
+            <ul class="navbar_menu">
+                <li class="navbar_item">
+                    <a href="aboutus.html" class="navbar_links">About us</a>
+                </li>
+                <li class="navbar_item">
+                    <a href="faq.html" class="navbar_links"> FAQ </a>
+                </li>
+                <li class="navbar_btn">
+                    <a href="login.html" class="button disabled"> Log in </a>
+                </li>
+                <li class="navbar_btn">
+                    <a href="register.html" class="button"> Register </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <nav class ="navbar">
+
+  <div class = "form_container">
+    <form action="action_page.php" method="post">
+      <div class="imgcontainer">
+        <img src="img_avatar2.png" alt="Avatar" class="avatar">
+      </div>
+            
+              <div class="container">
+                <h1 style="color:white;">Login</h1>
+                  <br>
+                <label for="uname" style="color: white;"><b>Username</b></label>
+                <input type="text" placeholder="Enter Username" name="uname" required>
+            
+                <label for="psw" style="color: white;"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" required>
+            
+                <button type="submit">Login</button>
+                <label style="color: white;">
+                  <input type="checkbox" checked="checked" name="remember"> Remember me
+                </label>
+              </div>
+            
+              <div class="container" style="background-color:#f1f1f1">
+                <button type="button" class="cancelbtn">Cancel</button>
+                <span class="psw">Forgot <a href="#">password?</a></span>
+              </div>
+            </form> 
+          </div>
+    </body>
+</html>

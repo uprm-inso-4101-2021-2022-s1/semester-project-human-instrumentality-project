@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HIP Website</title>
+        <link   rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        <nav class ="navbar">
+            <div class ="navbar_container">
+                <a href="index.html" id="navbar_logo">HIP</a>
+                <ul class="navbar_menu">
+                    <li class="navbar_item">
+                        <a href="aboutus.html" class="navbar_links">About us</a>
+                    </li>
+                    <li class="navbar_item">
+                        <a href="faq.html" class="navbar_links"> FAQ </a>
+                    </li>
+                    <li class="navbar_btn">
+                        <a href="login.html" class="button"> Log in </a>
+                    </li>
+                    <li class="navbar_btn">
+                        <a href="register.html" class="button disabled"> Register </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+
+    <form action="action_page.php" style="border:1px solid #ccc">
+    <div class="container">
+      <h1 style="color:white;">Register</h1>
+      <br>
+
+      <p style="color:white;">Please fill in this form to create an account.</p>
+      <hr>
+  
+      <p style="color:white;"><label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" name="email" required>
+  
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+  
+      <label for="psw-repeat"><b>Repeat Password</b></label>
+      <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+      <br>
+
+  
+      <label>
+        <p style="color:white;"> <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+      </p>
+        </label>
+    
+      <div class="clearfix">
+        <a href ="index.html" ><button type="button" class="cancelbtn">Cancel</button></a>
+        <button type="submit" class="signupbtn">Sign Up</button>
+      </div>
+    </div>
+  </form>
+</body>
+</html>
