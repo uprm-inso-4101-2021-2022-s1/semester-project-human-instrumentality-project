@@ -45,11 +45,11 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try{
-        let foundUser = users.find((data) => req.body.email === data.email);
+        let foundUser = users.find((data) => req.body.username === data.username);
         if (foundUser) {
     
             let submittedPass = req.body.password; 
-            let storedPass = foundUser.password; 
+            let storedPass = foundUser.passwordEncrypted; 
     
             const passwordMatch = await bcrypt.compare(submittedPass, storedPass);
             if (passwordMatch) {
@@ -70,7 +70,6 @@ app.post('/login', async (req, res) => {
         res.send("Internal server error");
     }
 });
-
 
 server.listen(3000, function(){
     console.log("server is listening on port: 3000");
