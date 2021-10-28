@@ -152,9 +152,11 @@ body {
 }
 
 .form_container {
-  justify-content: center;
-  margin-top: 700px;
-  margin-left: -30px;
+  margin-top: 0%;
+  width: 40%;
+  margin-left: 30%; /*It will then be center starting from 30% + 40% + 30% = 100%.*/
+  
+
 }
 
 .navbar_links:hover{
@@ -163,7 +165,7 @@ body {
 }
  /* Bordered form */
  form {
-    border: 3px solid #f1f1f1;
+    color: white;
   }
   
   /* Full-width inputs */
@@ -192,6 +194,12 @@ body {
     opacity: 0.8;
   }
   
+  .login_register_btn {
+    background-color: #366d6f;
+    width: 50%;
+    margin-left: 25%;
+    border-radius: 5px;
+  }
   /* Extra style for the cancel button (red) */
   .cancelbtn {
     width: auto;
@@ -213,13 +221,16 @@ body {
   
   /* Add padding to containers */
   .container {
+    flex-direction: row;
     padding: 16px;
+    justify-content: center;
+    align-items: center;
+
   }
   
-  /* The "Forgot password" text */
+  /* The "Forgot password" text and already have an account */
   span.psw {
-    float: right;
-    padding-top: 16px;
+    padding-top: 0px;
   }
   
   /* Change styles for span and cancel button on extra small screens */

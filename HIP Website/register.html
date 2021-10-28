@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+  <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,63 +9,58 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
-    </head>
+  </head>
 
-    <body>
-        <nav class ="navbar">
-            <div class ="navbar_container">
-                <a href="index.html" id="navbar_logo">HIP</a>
-                <ul class="navbar_menu">
-                    <li class="navbar_item">
-                        <a href="aboutus.html" class="navbar_links">About us</a>
-                    </li>
-                    <li class="navbar_item">
-                        <a href="faq.html" class="navbar_links"> FAQ </a>
-                    </li>
-                    <li class="navbar_btn">
-                        <a href="login.html" class="button"> Log in </a>
-                    </li>
-                    <li class="navbar_btn">
-                        <a href="register.html" class="button disabled"> Register </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        
-
-    <form action="/register"  method="POST" style="border:1px solid #ccc">
-    <div class="container">
-
-      <h1 style="color:white;">Register</h1>
-      <br>
-
-      <p style="color:white;">Please fill in this form to create an account.</p>
-      <hr>
-  
-      <p style="color:#367588;"><label>Username</label>
-			<input type ="text" id = 'username' name="username" placeholder="Username" required>
-
-      <p style="color:#367588;"><label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" name="email" required>
-
-      <label for="password"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="password" required>
-  
-      <label for="password-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" name="password-repeat" required>
-      <br>
-
-  
-      <label>
-        <p style="color:white;"> <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
-      </p>
-        </label>
-    
-      <div class="clearfix">
-        <a href ="index.html" ><button type="button" class="cancelbtn">Cancel</button></a>
-        <button type="submit" class="signupbtn">Sign Up</button>
+  <body>
+    <nav class ="navbar">
+      <div class ="navbar_container">
+          <a href="index.html" id="navbar_logo">HIP</a>
+          <ul class="navbar_menu">
+              <li class="navbar_item">
+                  <a href="aboutus.html" class="navbar_links">About us</a>
+              </li>
+              <li class="navbar_item">
+                  <a href="faq.html" class="navbar_links"> FAQ </a>
+              </li>
+              <li class="navbar_btn">
+                  <a href="login.html" class="button"> Log in </a>
+              </li>
+              <li class="navbar_btn">
+                  <a href="register.html" class="button disabled"> Register </a>
+              </li>
+          </ul>
       </div>
+    </nav>
+        
+    <div class="form_container" style="margin-top: 2%;">
+      <form action="/register"  method="post">
+        <div class="container">   
+          <h1 style="color:#366d6f; text-align: center;font-size: 3rem;">Register</h1>
+          <br>
+      
+          <label style="color:#366d6f;">Username</label>
+          <input style="border-radius: 5px;" type ="text" id = 'username' name="username" placeholder="Username" required>
+    
+          <label for="email" style="color:#366d6f;"><b>Email</b></label>
+          <input style="border-radius: 5px;" type="text" placeholder="Enter Email" name="email" required>
+    
+          <label for="password" style="color:#366d6f;"><b>Password</b></label>
+          <input style="border-radius: 5px;" type="password" placeholder="Enter Password" name="password" required>
+      
+          <label for="password-repeat" style="color:#366d6f;"><b>Repeat Password</b></label>
+          <input style="border-radius: 5px;" type="password" placeholder="Repeat Password" name="password-repeat" required>
+
+          <input type="checkbox" checked="checked" name="remember">
+          <label style="color: white;">Remember me</label>
+          <br>
+
+          <button type="submit" class="login_register_btn">Sign Up</button>
+          <br>
+
+          <a href="/login.html" style=" color: #367588; text-align: center; text-decoration: unset;"><h4 >I already have an account!</h4></a>
+        </div>
+      </form>
     </div>
-  </form>
+   
 </body>
 </html>
