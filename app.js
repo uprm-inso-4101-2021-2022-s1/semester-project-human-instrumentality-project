@@ -36,33 +36,35 @@ app.get('/', function(req,res) {
 
 app.post('/register', async (req, res) => {
     sess = req.session;
-    if (sess.email){ // Check if the email is present
-        res.send(`<div align ='center'><h2>You are already logged in!</h2></div><br><br><br><div align ='center'><h3>Your email is: ${sess.email}</h3></div><br><br><div align='center'><a href=\'/logout'>click to logout</a></div>`);
-    }
-    else{
-        try{
-            let foundUser = users.find((data) => req.body.email === data.email);
-            if (!foundUser) {
-        
-                let hashPassword = await bcrypt.hash(req.body.password, 10);
-        
-                let newUser = {
-                    id: Date.now(),
-                    username: req.body.username,
-                    email: req.body.email,
-                    passwordEncrypted: hashPassword,
-                    password: req.body.password
-                };
-                users.push(newUser);
-                console.log('User list', users);
-                res.redirect("/registrationSuccessful.html");
-            } else {
-                res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
-            }
-        } catch{
-            res.send("Internal server error");
+    try{
+        let foundUser = users.find((data) => req.body.email === data.email);
+        if (!foundUser) {
+    
+            let hashPassword = await bcrypt.hash(req.body.password, 10);
+    
+            let newUser = {
+                id: Date.now(),
+                username: req.body.username,
+                email: req.body.email,
+                passwordEncrypted: hashPassword,
+                password: req.body.password
+            };
+            users.push(newUser);
+            console.log('User list', users);
+            res.redirect("/registrationSuccessful.html");
+        } else {
+            res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
         }
+    } catch{
+        res.send("Internal server error");
     }
+    
+});
+
+app.post('/loginAsGuest', async(req,res) =>{
+    const id = Date.now();
+    sess.username = "Guest#" + id;
+    res.redirect("/play.html");
 });
 
 app.post('/login', async (req, res) => {
