@@ -1,43 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>HIP Website</title>
-        <link   rel="stylesheet" href="styles.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
-    </head>
-<body>
-
+  <head>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HIP Website</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <!--Navigation bar-->
     <div id="nav-placeholder"></div>
 
     <script>
-        $(function(){
-            $("#nav-placeholder").load("nav.html");
-        });
+      $(function () {
+        $("#nav-placeholder").load("nav.html");
+      });
     </script>
     <!--end of Navigation bar-->
-    
-<div class="card">
-    <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
-<p><label for="file" style="cursor: pointer; color:white">Upload Image</label></p>
-<p><img id="output" width="200" /></p>
 
-<script>
-var loadFile = function(event) {
-	var image = document.getElementById('output');
-	image.src = URL.createObjectURL(event.target.files[0]);
-};
-</script>
-<h1 style="color:white;">USERNAME</h1>
-    <p class="title"; style="color:white;">Level 1</p>
-    <p style="color:white;">Casual Gaming Novice</p>
-    <p><button style="height:40px; width:150px;">Update profile</button></p>
-  </div>
+    <div class="card">
+      <p>
+        <input
+          type="file"
+          accept="image/*"
+          name="image"
+          id="file"
+          onchange="loadFile(event)"
+          style="display: none"
+        />
+      </p>
+      <p>
+        <label for="file" style="cursor: pointer; color: white"
+          >Upload Image</label
+        >
+      </p>
+      <p><img id="output" width="200" /></p>
 
+      <div class="card">
+        <p>
+          <input
+            type="file"
+            accept="image/*"
+            name="image"
+            id="file"
+            onchange="loadFile(event)"
+            style="display: none"
+          />
+        </p>
+        <p>
+          <label for="file" style="cursor: pointer; color: white"
+            >Upload Image</label
+          >
+        </p>
+        <p><img id="output" width="200" /></p>
+
+        <script>
+          var loadFile = function (event) {
+            var image = document.getElementById("output");
+            image.src = URL.createObjectURL(event.target.files[0]);
+          };
+        </script>
+        <h1 style="color: white">USERNAME</h1>
+        <p class="title" ; style="color: white">Level 1</p>
+        <p style="color: white">Casual Gaming Novice</p>
+        <p>
+          <button style="height: 40px; width: 150px">Update profile</button>
+        </p>
+      </div>
+    </div>
   </body>
+</html>

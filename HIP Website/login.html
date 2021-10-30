@@ -2,50 +2,69 @@
 <html lang="en">
   <head>
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>HIP Website</title>
-        <link   rel="stylesheet" href="styles.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HIP Website</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap"
+      rel="stylesheet"
+    />
   </head>
-
 
   <body>
     <!--Navigation bar-->
     <div id="nav-placeholder"></div>
 
     <script>
-        $(function(){
-            $("#nav-placeholder").load("nav.html");
-        });
+      $(function () {
+        $("#nav-placeholder").load("nav.html");
+      });
     </script>
     <!--end of Navigation bar-->
 
+    <div class="form_container" style="margin-top: 5%">
+      <form action="/login" method="post">
+        <div class="container">
+          <h1 style="color: #366d6f; text-align: center; font-size: 3rem">
+            Log In
+          </h1>
+          <br />
+          <label for="uname" style="color: #366d6f"><b>Username</b></label>
+          <input
+            style="border-radius: 5px"
+            type="text"
+            placeholder="Enter Username"
+            name="username"
+            required
+          />
 
-      <div class = "form_container" style="margin-top: 5%;">
-        <form action="/login" method="post">
-          <div class="container">
-            <h1 style="color:#366d6f; text-align: center;font-size: 3rem;">Log In</h1>
-              <br>
-              <label for="uname" style="color: #366d6f;"><b>Username</b></label>
-              <input style="border-radius: 5px;" type="text" placeholder="Enter Username" name="username" required>
-            
-              <label for="psw" style="color: #366d6f;"><b>Password</b></label>
-              <input style="border-radius: 5px;" type="password" placeholder="Enter Password" name="password" required>
+          <label for="psw" style="color: #366d6f"><b>Password</b></label>
+          <input
+            style="border-radius: 5px"
+            type="password"
+            placeholder="Enter Password"
+            name="password"
+            required
+          />
 
-              <input type="checkbox" checked="checked" name="remember">
-              <label style="color: white;">Remember me</label>
-              <br>
+          <input type="checkbox" checked="checked" name="remember" />
+          <label style="color: white">Remember me</label>
+          <br />
 
-              <button type="submit" class="login_register_btn">Log In</button>
-              <br>
-              
-              <a href="/index.html" style=" color: #367588; text-align: center; text-decoration: unset;"><h4>Forgot password?</h4></a>
-          </div>    
-        </form> 
-      </div>
-    </body>
+          <button type="submit" class="login_register_btn">Log In</button>
+          <br />
+
+          <a
+            href="/index.html"
+            style="color: #367588; text-align: center; text-decoration: unset"
+            ><h4>Forgot password?</h4></a
+          >
+        </div>
+      </form>
+    </div>
+  </body>
 </html>
