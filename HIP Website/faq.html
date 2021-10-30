@@ -1,37 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>HIP Website</title>
         <link   rel="stylesheet" href="styles.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
     </head>
 
-
     <body>
-        <nav class ="navbar">
-            <div class ="navbar_container">
-                <a href="index.html" id="navbar_logo">HIP</a>
-                <ul class="navbar_menu">
-                    <li class="navbar_item">
-                        <a href="aboutus.html" class="navbar_links">About us</a>
-                    </li>
-                    <li class="navbar_item">
-                        <a href="faq.html" class="navbar_links disabled"> FAQ </a>
-                    </li>
-                    <li class="navbar_btn">
-                        <a href="login.html" class="button"> Log in </a>
-                    </li>
-                    <li class="navbar_btn">
-                        <a href="register.html" class="button"> Register </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <!--Navigation bar-->
+        <div id="nav-placeholder"></div>
+
+        <script>
+            $(function(){
+                $("#nav-placeholder").load("nav.html");
+            });
+        </script>
+        <!--end of Navigation bar-->
         <div class="container" style="max-width: 500px; margin: auto;">
             <h1 style="color:white; text-align: center;">Frequently Asked Questions (FAQs):</h1>
             <br>
@@ -44,7 +34,5 @@
             <p style="color:white;">Q: Who created HIP?</p>
             <p style="color:white;">A: Click on the About Us page to find out.</p>
         </div>
-          
-    
     </body>
 </html>

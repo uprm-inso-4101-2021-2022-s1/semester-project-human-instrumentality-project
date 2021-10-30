@@ -45,9 +45,7 @@ app.post('/register', async (req, res) => {
         }
         
         else if (!foundUser) {
-    
             let hashPassword = await bcrypt.hash(req.body.password, 10);
-    
             let newUser = {
                 id: Date.now(),
                 username: req.body.username,
