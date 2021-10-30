@@ -38,7 +38,13 @@ app.post('/register', async (req, res) => {
     sess = req.session;
     try{
         let foundUser = users.find((data) => req.body.email === data.email);
-        if (!foundUser) {
+        let foundUserName = users.find((data) => req.body.username === data.username);
+        
+        if (foundUserName){
+            res.send("<div align ='center'><h2>Username already taken</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
+        }
+        
+        else if (!foundUser) {
     
             let hashPassword = await bcrypt.hash(req.body.password, 10);
     
