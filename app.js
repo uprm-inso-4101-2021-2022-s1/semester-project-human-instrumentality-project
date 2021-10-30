@@ -55,7 +55,7 @@ app.post('/register', async (req, res) => {
                 };
                 users.push(newUser);
                 console.log('User list', users);
-                res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>");
+                res.redirect("/registrationSuccessful.html");
             } else {
                 res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
             }
@@ -78,7 +78,7 @@ app.post('/login', async (req, res) => {
             if (passwordMatch) {
                 sess.username = foundUser.username;
                 sess.email = foundUser.email;
-                res.send(`<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${sess.username}</h3></div><br><br><div align='center'><a href=\'/logout'>click to logout</a></div>`);
+                res.redirect("/loginSuccessful.html");
             } else {
                 res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./login.html'>login again</a></div>");
             }
@@ -95,7 +95,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/logout', async(req, res) =>{
+app.post('/logout', async(req, res) =>{
     sess = req.session;
 
     // For testing. 
@@ -109,7 +109,27 @@ app.get('/logout', async(req, res) =>{
 
     // Destroy the session, and redirect to the main page
     sess.destroy();
-    return res.redirect('/');
+    res.redirect('/index.html');
+});
+
+//When the user clicks the play button, depening if they are logged in or not they will be redirected to play page or login page respectively.
+app.post('/play', async(req, res) =>{
+    sess = req.session;
+    try{
+        if(sess.username){
+            console.log("User is logged in, redirecting to play page");
+            res.redirect("/play.html");
+        }
+        else {
+            console.log("User is not logged in, redirecting to log in page")
+            res.redirect("/login.html");
+        }
+    }
+    catch{
+        console.log("Whoops! hehe");
+    }
+
+
 });
 
 server.listen(3000, function(){
