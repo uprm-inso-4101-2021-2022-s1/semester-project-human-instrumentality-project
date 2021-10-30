@@ -1,23 +1,30 @@
-<nav class ="navbar">
-    <div class ="navbar_container">
-        <a href="index.html" id="navbar_logo">HIP</a>
-        <ul class="navbar_menu">
-            <li class="navbar_item">
-                <a href="aboutus.html" class="navbar_links">About us</a>
-            </li>
-            <li class="navbar_item">
-                <a href="faq.html" class="navbar_links"> FAQ </a>
-            </li>
-            <li class="navbar_btn">
-                <a href="login.html" class="button" id='loginButton'> Log in </a>
-            </li>
-            <li class="navbar_btn">
-                <a href="register.html" class="button" id='registerButton'> Register </a>
-            </li>
-        </ul>
-    </div>
+<nav class="navbar">
+  <div class="navbar_container">
+    <a href="index.html" id="navbar_logo">HIP</a>
+    <ul class="navbar_menu">
+      <li class="navbar_item">
+        <a href="aboutus.html" class="navbar_links">About us</a>
+      </li>
+      <li class="navbar_item">
+        <a href="faq.html" class="navbar_links"> FAQ </a>
+      </li>
+      <li class="navbar_btn" id="loginButton">
+        <a href="login.html" class="button" id="loginButton"> Log in </a>
+      </li>
+      <li class="navbar_btn" id="registerButton">
+        <a href="register.html" class="button" id="registerButton">
+          Register
+        </a>
+      </li>
+      <form action="/logout" method="post" id="logoutButton">
+        <button type="submit" class="button">Log Out</button>
+      </form>
+    </ul>
+  </div>
 </nav>
 
 <script>
-    
+  // TODO: Remove login/register buttons and add logout
+  // button IF the user is logged in
+  document.getElementById("logoutButton").remove();
 </script>
