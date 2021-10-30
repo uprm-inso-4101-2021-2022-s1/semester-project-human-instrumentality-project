@@ -94,86 +94,21 @@
             oninput="check_pass()"
           />
 
-          <div class="form_container" style="margin-top: 2%">
-            <form action="/register" method="post">
-              <div class="container">
-                <h1 style="color: #366d6f; text-align: center; font-size: 3rem">
-                  Register
-                </h1>
-                <br />
+          <input type="checkbox" checked="checked" name="remember" />
+          <label style="color: white">Remember me</label>
+          <br />
 
-                <label style="color: #366d6f">Username</label>
-                <input
-                  style="border-radius: 5px"
-                  type="text"
-                  id="username"
-                  name="username"
-                  placeholder="Username"
-                  required
-                />
+          <h4 id="passwordsMatch">Passwords do not match!</h4>
+          <button type="submit" class="login_register_btn" disabled id="submit">
+            Sign Up
+          </button>
+          <br />
 
-                <label for="email" style="color: #366d6f"><b>Email</b></label>
-                <input
-                  style="border-radius: 5px"
-                  type="text"
-                  placeholder="Enter Email"
-                  name="email"
-                  required
-                />
-
-                <label for="password" style="color: #366d6f"
-                  ><b>Password</b></label
-                >
-                <input
-                  style="border-radius: 5px"
-                  type="password"
-                  placeholder="Enter Password"
-                  name="password"
-                  id="password"
-                  required
-                  oninput="check_pass()"
-                />
-
-                <label for="password-repeat" style="color: #366d6f"
-                  ><b>Repeat Password</b></label
-                >
-                <input
-                  style="border-radius: 5px"
-                  type="password"
-                  placeholder="Repeat Password"
-                  name="password-repeat"
-                  id="password-repeat"
-                  required
-                  oninput="check_pass()"
-                />
-
-                <input type="checkbox" checked="checked" name="remember" />
-                <label style="color: white">Remember me</label>
-                <br />
-
-                <h4 id="passwordsMatch">Passwords do not match!</h4>
-                <button
-                  type="submit"
-                  class="login_register_btn"
-                  disabled
-                  id="submit"
-                >
-                  Sign Up
-                </button>
-                <br />
-
-                <a
-                  href="/login.html"
-                  style="
-                    color: #367588;
-                    text-align: center;
-                    text-decoration: unset;
-                  "
-                  ><h4>I already have an account!</h4></a
-                >
-              </div>
-            </form>
-          </div>
+          <a
+            href="/login.html"
+            style="color: #367588; text-align: center; text-decoration: unset"
+            ><h4>I already have an account!</h4></a
+          >
         </div>
       </form>
     </div>
