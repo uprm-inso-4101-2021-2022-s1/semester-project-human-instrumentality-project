@@ -40,13 +40,13 @@ app.get('/', function(req,res) {
 
 
 app.post('/register', async (req, res) => {
-    //TO-DO: verify if username isnt taken aswell  
     sess = req.session;
     try{
         const emailInUse = await User.isThisEmailInUse(req.body.email);
+        const userNameInUse = await User.isThisUserNameInUse(req.body.username);
 
-        if (!emailInUse) {
-    
+        if (!emailInUse && !userNameInUse) {
+            
             let hashPassword = await bcrypt.hash(req.body.password, 10);
 
             const user = await User({
@@ -59,8 +59,9 @@ app.post('/register', async (req, res) => {
             res.redirect("/registrationSuccessful.html");
             
         } else {
-            res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
+            res.send("<div align ='center'><h2>Email or username already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
         }
+
     } catch{
         res.send("Internal server error");
     }
