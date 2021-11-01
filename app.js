@@ -36,27 +36,29 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "./HIP Website/index.html"));
 });
 
-app.post("/register", async (req, res) => {
-  //TO-DO: verify if username isnt taken as well
-  sess = req.session;
-  try {
-    const emailInUse = await User.isThisEmailInUse(req.body.email);
+app.post('/register', async (req, res) => {
+    sess = req.session;
+    try{
+        const emailInUse = await User.isThisEmailInUse(req.body.email);
+        const userNameInUse = await User.isThisUserNameInUse(req.body.username);
 
-    if (!emailInUse) {
-      let hashPassword = await bcrypt.hash(req.body.password, 10);
+        if (!emailInUse && !userNameInUse) {
+            let hashPassword = await bcrypt.hash(req.body.password, 10);
+            const user = await User({
+                username: req.body.username, 
+                email: req.body.email, 
+                password: hashPassword,
+            });
 
-      const user = await User({
-        username: req.body.username,
-        email: req.body.email,
-        password: hashPassword,
-      });
+            await user.save();
+            res.redirect("/registrationSuccessful.html");
+            
+        } else {
+            res.send("<div align ='center'><h2>Email or username already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
+        }
 
-      await user.save();
-      res.redirect("/registrationSuccessful.html");
-    } else {
-      res.send(
-        "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
-      );
+    } catch{
+        res.send("Internal server error");
     }
   } catch {
     res.send("Internal server error");
