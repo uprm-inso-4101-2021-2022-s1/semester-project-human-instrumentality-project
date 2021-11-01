@@ -4,10 +4,11 @@ const http = require("http");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const bodyParser = require("body-parser");
-const users = require("./data").userDB;
-
+require("dotenv").config();
+require("./models/db");
 const app = express();
 const server = http.createServer(app);
+const User = require("./models/user");
 
 // Global Session: not recommended and TEMPORARY
 var sess;
@@ -37,30 +38,22 @@ app.get("/", function (req, res) {
 app.post("/register", async (req, res) => {
   sess = req.session;
   try {
-    let foundUser = users.find((data) => req.body.email === data.email);
-    let foundUserName = users.find(
-      (data) => req.body.username === data.username
-    );
+    const emailInUse = await User.isThisEmailInUse(req.body.email);
+    const userNameInUse = await User.isThisUserNameInUse(req.body.username);
 
-    if (foundUserName) {
-      res.send(
-        "<div align ='center'><h2>Username already taken</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
-      );
-    } else if (!foundUser) {
+    if (!emailInUse && !userNameInUse) {
       let hashPassword = await bcrypt.hash(req.body.password, 10);
-      let newUser = {
-        id: Date.now(),
+      const user = await User({
         username: req.body.username,
         email: req.body.email,
-        passwordEncrypted: hashPassword,
-        password: req.body.password,
-      };
-      users.push(newUser);
-      console.log("User list", users);
+        password: hashPassword,
+      });
+
+      await user.save();
       res.redirect("/registrationSuccessful.html");
     } else {
       res.send(
-        "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
+        "<div align ='center'><h2>Email or username already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
       );
     }
   } catch {
@@ -76,28 +69,29 @@ app.post("/loginAsGuest", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   sess = req.session;
-  try {
-    let foundUser = users.find((data) => req.body.username === data.username);
-    if (foundUser) {
-      let submittedPass = req.body.password;
-      let storedPass = foundUser.passwordEncrypted;
 
-      const passwordMatch = await bcrypt.compare(submittedPass, storedPass);
-      if (passwordMatch) {
-        sess.username = foundUser.username;
-        sess.email = foundUser.email;
+  try {
+    const userNameInUse = await User.isThisUserNameInUse(req.body.username);
+
+    if (userNameInUse) {
+      let usernamePassed = req.body.username;
+      let passwordPassed = req.body.password;
+
+      const user = await User.findOne({ username: usernamePassed });
+      const passwordsMatch = await user.passwordsMatch(passwordPassed);
+
+      if (passwordsMatch) {
+        sess.username = user.username;
+        sess.email = user.email;
         res.redirect("/loginSuccessful.html");
       } else {
         res.send(
-          "<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./login.html'>login again</a></div>"
+          "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
         );
       }
     } else {
-      let fakePass = `$2b$$10$ifgfgfgfgfgfgfggfgfgfggggfgfgfga`;
-      await bcrypt.compare(req.body.password, fakePass);
-
       res.send(
-        "<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
+        "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
       );
     }
   } catch {
@@ -108,11 +102,10 @@ app.post("/login", async (req, res) => {
 app.post("/logout", async (req, res) => {
   sess = req.session;
 
-  // For testing.
   if (sess.username) {
     console.log("Goodbye " + req.session.username);
   } else {
-    console.log("User isn't logged in!");
+    console.log("User isn't logged in!"); //this shoud technically never run since the log out button will only appear if you're logged in
   }
 
   // Destroy the session, and redirect to the main page
