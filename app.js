@@ -9,6 +9,7 @@ require("./models/db");
 const app = express();
 const server = http.createServer(app);
 const User = require("./models/user");
+const cookieparser = require('cookie-parser');
 
 // Global Session: not reccommended and TEMPORARY
 var sess;
@@ -30,6 +31,7 @@ app.use(
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./HIP Website")));
+app.use(cookieparser());
 
 app.get("/", function (req, res) {
   sess = req.session;
@@ -73,6 +75,7 @@ app.post("/login", async (req, res) => {
 
   try {
     const userNameInUse = await User.isThisUserNameInUse(req.body.username);
+    let token = req.cookies.username;
 
     if (userNameInUse) {
       let usernamePassed = req.body.username;
@@ -81,16 +84,26 @@ app.post("/login", async (req, res) => {
       const user = await User.findOne({ username: usernamePassed });
       const passwordsMatch = await user.passwordsMatch(passwordPassed);
 
+      if (token === user.username){
+          sess.username = user.username;
+          sess.email = user.email;
+          res.redirect("/loggedIn.html");
+          
+       }
+
+       else{
+
       if (passwordsMatch) {
         sess.username = user.username;
         sess.email = user.email;
+        res.cookie("username", user.username);
         res.redirect("/loginSuccessful.html");
       } else {
         res.send(
           "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
         );
       }
-    } else {
+    } } else {
       res.send(
         "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
       );
@@ -102,8 +115,9 @@ app.post("/login", async (req, res) => {
 
 app.post("/logout", async (req, res) => {
   sess = req.session;
-
+  res.clearCookie("username");
   if (sess.username) {
+    
     console.log("Goodbye " + req.session.username);
   } else {
     console.log("User isn't logged in!"); //this shoud technically never run since the log out button will only appear if you're logged in
