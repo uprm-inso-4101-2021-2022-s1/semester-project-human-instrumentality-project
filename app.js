@@ -55,20 +55,20 @@ function redirectToPageWithHeader(req, res, page) {
 // Otherwise redirect to login page.
 function redirectIfLoggedIn(req, res, pageIfLoggedIn) {
   sess = req.session;
+  let pageToGoTo = pageIfLoggedIn
   let username = req.cookies.username;
-  if (sess.username) {
-    redirectToPageWithHeader(req, res, pageIfLoggedIn);
-  }
 
+
+  if (sess.username){}
   // If the user has a cookie present, log them in!
   else if (username) {
     console.log("Logging in as user: " + username);
     updateSession(sess, username, req.cookies.email);
-    redirectToPageWithHeader(req, res, pageIfLoggedIn);
   } else {
+    pageToGoTo = "login";
     console.log("User is not logged in, redirecting to log in page");
-    redirectToPageWithHeader(req, res, "login");
   }
+  redirectToPageWithHeader(req,res,pageToGoTo);
 }
 
 function updateSession(session, username, email) {
@@ -104,7 +104,7 @@ app.get("/index", async (req, res) => {
 });
 
 app.get("/login", async (req, res) => {
-  redirectIfLoggedIn(req, res, "login");
+  redirectToPageWithHeader(req, res, "login");
 });
 
 app.get("/play", async (req, res) => {
@@ -169,8 +169,11 @@ app.post("/login", async (req, res) => {
       const passwordsMatch = await user.passwordsMatch(passwordPassed);
       if (passwordsMatch) {
         updateSession(sess, user.username, user.email);
-        res.cookie("username", sess.username);
-        res.cookie("email", sess.email);
+
+        if (req.body.remember){
+          res.cookie("username", sess.username);
+          res.cookie("email", sess.email);
+        }
         res.redirect("/loginSuccessful.html");
       } else {
         res.send(
