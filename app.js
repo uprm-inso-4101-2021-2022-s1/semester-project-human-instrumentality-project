@@ -190,6 +190,7 @@ app.post("/login", async (req, res) => {
 app.post("/logout", async (req, res) => {
   sess = req.session;
   res.clearCookie("username");
+  res.clearCookie("email");
   if (sess.username) {
     console.log("Goodbye " + req.session.username);
   } else {
