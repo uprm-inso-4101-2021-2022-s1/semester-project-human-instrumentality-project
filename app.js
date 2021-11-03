@@ -37,6 +37,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "HIP Website")));
 app.use(cookieparser());
 
+// Functions
+
+// Redirect user to the parameter page and passes in the session username
+// if present
 function redirectToPageWithHeader(req, res, page) {
   sess = req.session;
   if (sess.username) {
@@ -46,14 +50,30 @@ function redirectToPageWithHeader(req, res, page) {
   }
 }
 
+// Redirects user to the page only if they are logged in
+// or the user has a cookie present.
+// Otherwise redirect to login page.
 function redirectIfLoggedIn(req, res, pageIfLoggedIn) {
   sess = req.session;
+  let username = req.cookies.username;
   if (sess.username) {
-    res.render(pageIfLoggedIn, { username: sess.username });
+    redirectToPageWithHeader(req, res, pageIfLoggedIn);
+  }
+
+  // If the user has a cookie present, log them in!
+  else if (username) {
+    console.log("Logging in as user: " + username)
+    updateSession(sess, username, req.cookies.email);
+    redirectToPageWithHeader(req, res, pageIfLoggedIn);
   } else {
     console.log("User is not logged in, redirecting to log in page");
     res.redirect("/login");
   }
+}
+
+function updateSession(session, username, email) {
+  session.username = username;
+  session.email = email;
 }
 
 // EJS Page Redirection
@@ -84,7 +104,7 @@ app.get("/index", async (req, res) => {
 });
 
 app.get("/login", async (req, res) => {
-  redirectToPageWithHeader(req, res, "login");
+  redirectIfLoggedIn(req,res,"login");
 });
 
 app.get("/play", async (req, res) => {
@@ -103,8 +123,7 @@ app.get("/resetPassword", async (req, res) => {
   redirectToPageWithHeader(req, res, "resetPassword");
 });
 
-// Functions
-
+// POST methods
 app.post("/register", async (req, res) => {
   sess = req.session;
   try {
@@ -139,10 +158,8 @@ app.post("/loginAsGuest", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   sess = req.session;
-
   try {
     const userNameInUse = await User.isThisUserNameInUse(req.body.username);
-    let token = req.cookies.username;
 
     if (userNameInUse) {
       let usernamePassed = req.body.username;
@@ -150,22 +167,15 @@ app.post("/login", async (req, res) => {
 
       const user = await User.findOne({ username: usernamePassed });
       const passwordsMatch = await user.passwordsMatch(passwordPassed);
-
-      if (token === user.username) {
-        sess.username = user.username;
-        sess.email = user.email;
-        res.redirect("/loggedIn.html");
+      if (passwordsMatch) {
+        updateSession(sess, user.username, user.email);
+        res.cookie("username", sess.username);
+        res.cookie("email", sess.email);
+        res.redirect("/loginSuccessful.html");
       } else {
-        if (passwordsMatch) {
-          sess.username = user.username;
-          sess.email = user.email;
-          res.cookie("username", user.username);
-          res.redirect("/loginSuccessful.html");
-        } else {
-          res.send(
-            "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
-          );
-        }
+        res.send(
+          "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
+        );
       }
     } else {
       res.send(
