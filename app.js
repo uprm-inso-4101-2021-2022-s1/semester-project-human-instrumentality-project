@@ -14,9 +14,12 @@ const app = express();
 const server = http.createServer(app);
 const User = require("./models/user");
 
+
 // Global Session: not recommended and TEMPORARY
 var sess;
 
+app.set('views', path.join(__dirname, "HIP Website/views"));
+app.set('view engine', 'ejs');
 app.use(
   session({
     // It holds the secret key for session
@@ -32,12 +35,18 @@ app.use(
   })
 );
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "./HIP Website")));
+app.use(express.static(path.join(__dirname, "HIP Website")));
 app.use(cookieparser());
 
 app.get("/", function (req, res) {
   sess = req.session;
-  res.sendFile(path.join(__dirname, "./HIP Website/index.html"));
+  if (sess.username){
+    res.render("index", {username: sess.username});
+  }
+  else{
+    res.render("index", {username: ""});
+  }
+  
 });
 
 app.post("/register", async (req, res) => {
