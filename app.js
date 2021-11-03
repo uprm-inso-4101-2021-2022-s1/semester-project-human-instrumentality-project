@@ -62,12 +62,12 @@ function redirectIfLoggedIn(req, res, pageIfLoggedIn) {
 
   // If the user has a cookie present, log them in!
   else if (username) {
-    console.log("Logging in as user: " + username)
+    console.log("Logging in as user: " + username);
     updateSession(sess, username, req.cookies.email);
     redirectToPageWithHeader(req, res, pageIfLoggedIn);
   } else {
     console.log("User is not logged in, redirecting to log in page");
-    res.redirect("/login");
+    redirectToPageWithHeader(req, res, "login");
   }
 }
 
@@ -104,7 +104,7 @@ app.get("/index", async (req, res) => {
 });
 
 app.get("/login", async (req, res) => {
-  redirectIfLoggedIn(req,res,"login");
+  redirectIfLoggedIn(req, res, "login");
 });
 
 app.get("/play", async (req, res) => {
