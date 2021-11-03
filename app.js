@@ -202,6 +202,11 @@ app.post("/logout", async (req, res) => {
   res.redirect("/");
 });
 
+// 404 page
+app.use(function(req,res){
+  redirectToPageWithHeader(req, res.status(404), "404");
+});
+
 server.listen(3000, function () {
   console.log("server is listening on port: 3000");
 });
