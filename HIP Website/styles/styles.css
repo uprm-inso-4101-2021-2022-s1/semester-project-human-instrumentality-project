@@ -156,6 +156,26 @@ body {
   margin-left: 30%; /*It will then be center starting from 30% + 40% + 30% = 100%.*/
 }
 
+.form_container_left {
+  margin-top: 0%;
+  width: 40%;
+  float: left;
+  width: 300px;
+  border: 3px solid #367588;
+  padding: 10px;
+
+}
+
+.form_container_fourcols {
+  column-count: 3;
+  margin: 0;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}
+
 .navbar_links:hover{
     color: #366d6f;
     transition: all 0.3s ease;
