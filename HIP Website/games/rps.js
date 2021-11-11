@@ -49,6 +49,12 @@ class Player{
 
     update(){
         this.draw();
+        //this resets the x,y,width, and height properties of the player every update 
+        //it makes sure that if the screen is resized it keeps the same ratio and not the original values
+        this.x = canvas.width/8;
+        this.y = canvas.height/4;
+        this.width = canvas.width/14;
+        this.height = canvas.width/14;
     }
 
     draw(){
@@ -85,6 +91,12 @@ class Opponent{
 
     update(){
         //should search for a change of the choice in the databaase and if they player clicked ready
+        //this resets the x,y,width, and height properties of the opponent every update 
+        //it makes sure that if the screen is resized it keeps the same ratio and not the original values
+        this.x = canvas.width - canvas.width/4;
+        this.y = canvas.height/4;
+        this.width = canvas.width/14;
+        this.height = canvas.width/14;
     }
     
     draw(){
@@ -145,7 +157,9 @@ function animate(){
         opponentPicked = true;
     }    
 
-
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;   
+    
     animationId = requestAnimationFrame(animate);
     ctx.fillStyle = 'rgb(26, 24, 24)';//sets the color to the background color
     ctx.fillRect(0,0,canvas.width,canvas.height);//fills the background after every draw
