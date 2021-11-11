@@ -1,39 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HIP Website</title>
-    <link rel="stylesheet" href="styles/styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-
+  <%- include('partials/nav.ejs', {title:"Play"}) %>
   <body>
-    <nav class="navbar">
-      <div class="navbar_container">
-        <a href="index.html" id="navbar_logo">HIP</a>
-        <ul class="navbar_menu">
-          <li class="navbar_item">
-            <a href="aboutus.html" class="navbar_links">About us</a>
-          </li>
-          <li class="navbar_item">
-            <a href="faq.html" class="navbar_links"> FAQ </a>
-          </li>
-          <li class="navbar_btn">
-            <form action="/logout" method="post">
-              <button type="submit" class="button">Log Out</button>
-            </form>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
     <form action="action_page.php" style="border: 1px solid #ccc">
       <div class="container">
         <h1 style="color: white">Game Library</h1>
@@ -48,8 +16,7 @@
           <span style="color: White; font-size: 24px">
             <p>
               <a
-                href="https://nsebhastian.github.io/rock-paper-scissors-game/"
-                target="_blank"
+                href="../games/rps.html"
                 style="color: #356788"
                 >Rock Paper Scissors</a
               >

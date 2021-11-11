@@ -1,0 +1,29 @@
+<%- include('header.ejs', {title: title}) %>
+<nav class="navbar">
+  <div class="navbar_container">
+    <a href="/" id="navbar_logo">HIP</a>
+    <ul class="navbar_menu">
+      <li class="navbar_item">
+        <a href="/aboutus" class="navbar_links">About us</a>
+      </li>
+      <li class="navbar_item">
+        <a href="/faq" class="navbar_links"> FAQ </a>
+      </li>
+      <% if (!username){ %>
+      <li class="navbar_btn">
+        <a href="/login" class="button"> Log in </a>
+      </li>
+      <li class="navbar_btn">
+        <a href="/register" class="button"> Register </a>
+      </li>
+      <% }else{ %>
+      <li class="navbar_btn">
+        <a href="/profile" class="button"> Profile </a>
+      </li>
+      <form action="/logout" method="post" style="width: 100%;margin-right: 5%; align-self: center;">
+        <button type="submit" style="white-space: nowrap; border-radius: 8px; font-size: 18px; padding-top: 11px; padding-bottom: 11px;">Log Out</button>
+      </form>
+      <% } %>
+    </ul>
+  </div>
+</nav>

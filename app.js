@@ -14,9 +14,11 @@ const app = express();
 const server = http.createServer(app);
 const User = require("./models/user");
 
-// Global Session: not reccommended and TEMPORARY
+// Global Session: not recommended and TEMPORARY
 var sess;
 
+app.set("views", path.join(__dirname, "HIP Website/views"));
+app.set("view engine", "ejs");
 app.use(
   session({
     // It holds the secret key for session
@@ -31,16 +33,97 @@ app.use(
     saveUninitialized: true,
   })
 );
-
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "./HIP Website")));
+app.use(express.static(path.join(__dirname, "HIP Website")));
 app.use(cookieparser());
 
-app.get("/", function (req, res) {
+// Functions
+
+// Redirect user to the parameter page and passes in the session username
+// if present
+function redirectToPageWithHeader(req, res, page) {
   sess = req.session;
-  res.sendFile(path.join(__dirname, "./HIP Website/index.html"));
+  if (sess.username) {
+    res.render(page, { username: sess.username });
+  } else {
+    res.render(page, { username: "" });
+  }
+}
+
+// Redirects user to the page only if they are logged in
+// or the user has a cookie present.
+// Otherwise redirect to login page.
+function redirectIfLoggedIn(req, res, pageIfLoggedIn) {
+  sess = req.session;
+  let pageToGoTo = pageIfLoggedIn
+  let username = req.cookies.username;
+
+
+  if (sess.username){}
+  // If the user has a cookie present, log them in!
+  else if (username) {
+    console.log("Logging in as user: " + username);
+    updateSession(sess, username, req.cookies.email);
+  } else {
+    pageToGoTo = "login";
+    console.log("User is not logged in, redirecting to log in page");
+  }
+  redirectToPageWithHeader(req,res,pageToGoTo);
+}
+
+function updateSession(session, username, email) {
+  session.username = username;
+  session.email = email;
+}
+
+// EJS Page Redirection
+// Try to keep them in alphabetical order!
+// Also exclude partials pages!
+app.get("/", async (req, res) => {
+  res.redirect("/index");
 });
 
+app.get("/aboutus", async (req, res) => {
+  redirectToPageWithHeader(req, res, "aboutus");
+});
+
+app.get("/avatarSelection", async (req, res) => {
+  redirectIfLoggedIn(req, res, "avatarSelection");
+});
+
+app.get("/faq", async (req, res) => {
+  redirectToPageWithHeader(req, res, "faq");
+});
+
+app.get("/forgotPassword", async (req, res) => {
+  redirectToPageWithHeader(req, res, "forgotPassword");
+});
+
+app.get("/index", async (req, res) => {
+  redirectToPageWithHeader(req, res, "index");
+});
+
+app.get("/login", async (req, res) => {
+  redirectToPageWithHeader(req, res, "login");
+});
+
+app.get("/play", async (req, res) => {
+  redirectIfLoggedIn(req, res, "play");
+});
+
+app.get("/profile", async (req, res) => {
+  redirectIfLoggedIn(req, res, "profile");
+});
+
+app.get("/register", async (req, res) => {
+  redirectToPageWithHeader(req, res, "register");
+});
+
+app.get("/resetPassword", async (req, res) => {
+  redirectToPageWithHeader(req, res, "resetPassword");
+});
+
+// POST methods
 app.post("/register", async (req, res) => {
   sess = req.session;
   try {
@@ -70,15 +153,13 @@ app.post("/register", async (req, res) => {
 app.post("/loginAsGuest", async (req, res) => {
   const id = Date.now();
   sess.username = "Guest#" + id;
-  res.redirect("/play.html");
+  res.redirect("/play");
 });
 
 app.post("/login", async (req, res) => {
   sess = req.session;
-
   try {
     const userNameInUse = await User.isThisUserNameInUse(req.body.username);
-    let token = req.cookies.username;
 
     if (userNameInUse) {
       let usernamePassed = req.body.username;
@@ -86,22 +167,18 @@ app.post("/login", async (req, res) => {
 
       const user = await User.findOne({ username: usernamePassed });
       const passwordsMatch = await user.passwordsMatch(passwordPassed);
+      if (passwordsMatch) {
+        updateSession(sess, user.username, user.email);
 
-      if (token === user.username) {
-        sess.username = user.username;
-        sess.email = user.email;
-        res.redirect("/loggedIn.html");
-      } else {
-        if (passwordsMatch) {
-          sess.username = user.username;
-          sess.email = user.email;
-          res.cookie("username", user.username);
-          res.redirect("/loginSuccessful.html");
-        } else {
-          res.send(
-            "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
-          );
+        if (req.body.remember){
+          res.cookie("username", sess.username);
+          res.cookie("email", sess.email);
         }
+        res.redirect("/loginSuccessful.html");
+      } else {
+        res.send(
+          "<div align ='center'><h2>Invalid username or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>"
+        );
       }
     } else {
       res.send(
@@ -116,6 +193,7 @@ app.post("/login", async (req, res) => {
 app.post("/logout", async (req, res) => {
   sess = req.session;
   res.clearCookie("username");
+  res.clearCookie("email");
   if (sess.username) {
     console.log("Goodbye " + req.session.username);
   } else {
@@ -125,27 +203,12 @@ app.post("/logout", async (req, res) => {
 
   // Destroy the session, and redirect to the main page
   sess.destroy();
-  res.redirect("/index.html");
+  res.redirect("/");
 });
 
-/* 
-When the user clicks the play button, 
-depending if they are logged in or not they will be redirected 
-to play page or login page respectively. 
-*/
-app.post("/play", async (req, res) => {
-  sess = req.session;
-  try {
-    if (sess.username) {
-      console.log("User is logged in, redirecting to play page");
-      res.redirect("/play.html");
-    } else {
-      console.log("User is not logged in, redirecting to log in page");
-      res.redirect("/login.html");
-    }
-  } catch {
-    console.log("Whoops! hehe");
-  }
+// 404 page
+app.use(function(req,res){
+  redirectToPageWithHeader(req, res.status(404), "404");
 });
 
 server.listen(3000, function () {
