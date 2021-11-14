@@ -66,6 +66,23 @@ io.on('connection', (socket) => {
     io.to(socket.activeRoom).emit("action", action);
   });
 
+  socket.on('getOpponentShot', async (lobbyId, pName, oName) => {
+    let done = false;
+    try{
+      while(!done){
+        let tempLobby = await lobbies.findOne({"_id": lobbyId});
+        let actions = tempLobby.actions;
+        actions.forEach(a => {
+          if(a.includes(oName + " shot")){
+            socket.emit("opponentShot", a.substring(a.length-1));
+            done = true;
+          }
+        });    
+      }
+    } catch(e){
+      console.log("Lobby was most likely deleted, searching for actions failed.");
+    }
+  });
 
   socket.on("checkPlayer2", async (lobbyId) => {
     let tempName = "";

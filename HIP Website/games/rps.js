@@ -128,13 +128,10 @@ class Opponent{
 }
 
 
-
-
 let pScore = 0;
 let oScore = 0;
 let roundOver = false;
 let nextRoundCountDown = 5;
-
 
 let animationId;
 let countDownTimerId;
@@ -147,25 +144,6 @@ let lobbyID;
 
 
 function animate(){
-
-    //THIS IS TEMPORARY!!
-    // if(!opponentPicked){
-    //     setTimeout(() => {
-    //         const pick = Math.ceil(Math.random()*3);
-    //         if(pick == 3){
-    //             player.changeSelection('r');
-    //         }
-    //         else if(pick == 2){
-    //             player.changeSelection('p');
-    //         }
-    //         else {//or 1
-    //             player.changeSelection('s');
-    //         }
-    //         player.ready = true;
-    //     }, 5* 1000);//5s
-    //     opponentPicked = true;
-    // }    
-
     canvas.width = innerWidth;
     canvas.height = innerHeight;   
     
@@ -175,8 +153,7 @@ function animate(){
 
     
     player.update();
-    // player.update();
-
+    opponent.update();
     if(roundOver){
         if(pScore == 3){
             nextRoundEl.innerHTML = "You won!! Redirecting to play page in " + nextRoundCountDown + "...";
@@ -198,10 +175,10 @@ function animate(){
                 resetRound();
             }
         }
-        //check if the game is over
+        
         opponent.draw();
-
     }
+
     if(opponent.name == ""){
         opponentPickElement.innerHTML = "Waiting on opponent to join...";
     }
@@ -294,6 +271,7 @@ scissorBtn.addEventListener('click', () => {
 });
 
 readyBtn.addEventListener('click', () => {
+    socket.emit("action", player.name + " shot " + player.currentSelected);
     player.ready = true;
 
     //removes all the buttons such that they can't be used if the player is ready
@@ -324,6 +302,8 @@ socket.on("joined", async (lobbyId, player1, player2) =>{
     }else{//then "this" joined as the player2
         player.name = player2;
         opponent.name = player1;
+        //call the actions since both players are now inside the section
+        await socket.emit("getOpponentShot", lobbyId, player.name, opponent.name);
         //if this doesn't make sense or seems confusing please feel free to ask^
     }
 
@@ -331,11 +311,20 @@ socket.on("joined", async (lobbyId, player1, player2) =>{
     console.log(lobbyID);
 
     socket.emit('action', player.name +  " joined the lobby.");
-
     animate();
 });
 
-socket.on("setPlayer2", (player2) =>{//gets back the opponent if he joined
+
+socket.on("setPlayer2", async (player2) =>{//gets back the opponent if he joined
     console.log(player2 + "joined");
     opponent.name = player2;
+    //call the actions since both players are now inside the section
+    await socket.emit("getOpponentShot", lobbyID, player.name, opponent.name);
+    
+});
+
+
+socket.on("opponentShot", (opChoice) =>{
+    opponent.changeSelection(opChoice);
+    opponent.ready = true;
 });
