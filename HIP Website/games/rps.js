@@ -1,3 +1,5 @@
+const socket = io("http://localhost:3000", { autoConnect: false });
+
 const canvas = document.getElementById('canvasrps');
 const ctx = canvas.getContext('2d');
 
@@ -38,7 +40,8 @@ const nextRoundEl = document.getElementById('nextRoundElement');
 
 //player class
 class Player{
-    constructor(x,y,width,height){
+    constructor(name, x,y,width,height){
+        this.name = name;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -80,7 +83,8 @@ class Player{
 
 
 class Opponent{
-    constructor(x,y,width,height,currentSelected,ready){
+    constructor(name, x,y,width,height,currentSelected,ready){
+        this.name = name;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -124,8 +128,7 @@ class Opponent{
 }
 
 
-let player1 = new Player(canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
-let opponent1 = new Opponent(canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14);
+
 
 let pScore = 0;
 let oScore = 0;
@@ -137,25 +140,31 @@ let animationId;
 let countDownTimerId;
 let opponentPicked = false;//temp
 
+let player = new Player("", canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
+let opponent = new Opponent("", canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14); //meaning opponent could have an empty name
+
+let lobbyID;
+
+
 function animate(){
 
     //THIS IS TEMPORARY!!
-    if(!opponentPicked){
-        setTimeout(() => {
-            const pick = Math.ceil(Math.random()*3);
-            if(pick == 3){
-                opponent1.changeSelection('r');
-            }
-            else if(pick == 2){
-                opponent1.changeSelection('p');
-            }
-            else {//or 1
-                opponent1.changeSelection('s');
-            }
-            opponent1.ready = true;
-        }, 5* 1000);//5s
-        opponentPicked = true;
-    }    
+    // if(!opponentPicked){
+    //     setTimeout(() => {
+    //         const pick = Math.ceil(Math.random()*3);
+    //         if(pick == 3){
+    //             player.changeSelection('r');
+    //         }
+    //         else if(pick == 2){
+    //             player.changeSelection('p');
+    //         }
+    //         else {//or 1
+    //             player.changeSelection('s');
+    //         }
+    //         player.ready = true;
+    //     }, 5* 1000);//5s
+    //     opponentPicked = true;
+    // }    
 
     canvas.width = innerWidth;
     canvas.height = innerHeight;   
@@ -165,8 +174,8 @@ function animate(){
     ctx.fillRect(0,0,canvas.width,canvas.height);//fills the background after every draw
 
     
-    player1.update();
-    opponent1.update();
+    player.update();
+    // player.update();
 
     if(roundOver){
         if(pScore == 3){
@@ -190,19 +199,21 @@ function animate(){
             }
         }
         //check if the game is over
-        opponent1.draw();
+        opponent.draw();
 
     }
-
-    if(!opponent1.ready){
+    if(opponent.name == ""){
+        opponentPickElement.innerHTML = "Waiting on opponent to join...";
+    }
+    else if(!opponent.ready){
         opponentPickElement.innerHTML = "Picking...";
     }
 
-    if(!player1.ready && opponent1.ready){
+    else if(!player.ready && opponent.ready){
         opponentPickElement.innerHTML = "Picked!";
     }   
     
-    if((opponent1.ready && player1.ready) && !roundOver){
+    else if((player.ready && opponent.ready) && !roundOver){
         opponentPickElement.innerHTML = null;
         pickRoundkWinnerAndUdpateScore();
         roundOverCountDown();//calls the countdown only once since it has an interval in the inside!
@@ -212,14 +223,14 @@ function animate(){
 
 
 function pickRoundkWinnerAndUdpateScore(){
-    if(player1.currentSelected == opponent1.currentSelected){
+    if(player.currentSelected == opponent.currentSelected){
         //tie
         roundRes1.innerHTML = "tie!";
         roundRes2.innerHTML = "tie!";
     }
-    else if((player1.currentSelected == 'p' && opponent1.currentSelected == 'r') 
-        || (player1.currentSelected == 'r' && opponent1.currentSelected == 's') 
-        || (player1.currentSelected == 's' && opponent1.currentSelected == 'p')){
+    else if((player.currentSelected == 'p' && opponent.currentSelected == 'r') 
+        || (player.currentSelected == 'r' && opponent.currentSelected == 's') 
+        || (player.currentSelected == 's' && opponent.currentSelected == 'p')){
         //player wins
         playersScore.innerHTML = ++pScore;
         roundRes1.innerHTML = "Round Winner!";
@@ -242,11 +253,11 @@ function roundOverCountDown(){
 
 
 function resetRound(){
-    player1.changeSelection('r');
-    player1.ready = false; 
+    player.changeSelection('r');
+    player.ready = false; 
     
-    opponent1.changeSelection('r');
-    opponent1.ready = false;
+    opponent.changeSelection('r');
+    opponent.ready = false;
 
     //refer to the side note in inside the event listener for the ready btn 
     readyBtn.style.display="initial";
@@ -271,19 +282,19 @@ function resetRound(){
 
 //listeners for the buttons
 rockBtn.addEventListener('click', () => {
-    player1.changeSelection('r');
+    player.changeSelection('r');
 });
 
 paperBtn.addEventListener('click', () => {
-    player1.changeSelection('p');
+    player.changeSelection('p');
 });
 
 scissorBtn.addEventListener('click', () => {
-    player1.changeSelection('s');
+    player.changeSelection('s');
 });
 
 readyBtn.addEventListener('click', () => {
-    player1.ready = true;
+    player.ready = true;
 
     //removes all the buttons such that they can't be used if the player is ready
     //side note, there are several aways to accomplish this, though i picked this one as it works in the case of the game and the purpose of "removing them"
@@ -293,4 +304,38 @@ readyBtn.addEventListener('click', () => {
     scissorBtn.style.display="none";
 });
 
-animate();
+
+//socket listeners
+socket.connect();
+
+socket.on("connect", async () => {
+    socket.emit("join", Date.now(), "RPS");
+
+});
+
+
+socket.on("joined", async (lobbyId, player1, player2) =>{
+    if(player2 == ""){//then "this" joined as the player1
+        player.name = player1;
+        //start a loop in app.js that looks for when player2 joins
+        await socket.emit('checkPlayer2', (lobbyId));
+        //opponent's name stays empty
+
+    }else{//then "this" joined as the player2
+        player.name = player2;
+        opponent.name = player1;
+        //if this doesn't make sense or seems confusing please feel free to ask^
+    }
+
+    lobbyID = lobbyId;
+    console.log(lobbyID);
+
+    socket.emit('action', player.name +  " joined the lobby.");
+
+    animate();
+});
+
+socket.on("setPlayer2", (player2) =>{//gets back the opponent if he joined
+    console.log(player2 + "joined");
+    opponent.name = player2;
+});

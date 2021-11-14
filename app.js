@@ -13,6 +13,86 @@ const database = require("./models/db");
 const app = express();
 const server = http.createServer(app);
 const User = require("./models/user");
+const cors = require('cors');
+const io = require('socket.io')(server);
+
+const { MongoClient } = require('mongodb');
+const client = new MongoClient(process.env.MONGO_URI);
+
+app.use(cors());
+
+var lobbies;
+let activeRoomId;
+
+io.on('connection', (socket) => {
+
+  socket.on('join', async (lobbyId, gameName) => {
+    try{
+      let lobby;
+      let result = await lobbies.findOne({"name" : gameName, "player2": ""});//if there exists a lobby with that game that has no player2
+
+      //if there is no lobby available it will create and join a new lobby
+      if(!result){
+        console.log("creating new lobby for " + gameName);
+        await lobbies.insertOne(
+          {
+            "_id": lobbyId,
+            name: gameName,
+            player1: sess.username,
+            player2: "",//since player2 hasn't joined (new lobby)
+            actions: []
+            });
+        lobby = await lobbies.findOne({"_id": lobbyId});
+      }else{//exists
+        console.log("lobby exists")
+        await lobbies.updateOne(result, {"$set": {player2: sess.username}});
+        lobby = await lobbies.findOne({"player2": sess.username});//since a lobby exists, we can't find the lobby with the passed lobbyId, hence, we look for the one the player2 was just added to
+      }
+      
+      // console.log(lobby);
+      socket.join(lobby._id);
+      socket.emit("joined", lobby._id, lobby.player1,lobby.player2);
+      socket.activeRoom = lobby._id;
+      activeRoomId = socket.activeRoom
+
+    } catch(e) {
+      console.error(e);
+    }
+  });
+
+
+  socket.on('action', (action) => {
+    lobbies.updateOne({"_id": socket.activeRoom}, {"$push": {"actions": action}});
+    io.to(socket.activeRoom).emit("action", action);
+  });
+
+
+  socket.on("checkPlayer2", async (lobbyId) => {
+    let tempName = "";
+    try{
+      while(tempName == ""){
+        let tempLobby = await lobbies.findOne({"_id": lobbyId});
+        tempName = tempLobby.player2;
+      }
+    } catch(e){
+      console.log("Lobby was most likely deleted, searching for player2 failed.");
+    }
+
+    console.log("Player2 joined.");
+    socket.emit("setPlayer2", (tempName));
+  });
+
+  socket.on('disconnect', (socket)=>{
+    
+    //for now, i made it such that if a player leaves, the lobby is removed
+    lobbies.deleteOne({"_id":activeRoomId});
+    console.log("Disconnected from that room.");
+    
+  });
+});
+
+
+
 
 // Global Session: not recommended and TEMPORARY
 var sess;
@@ -37,7 +117,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "HIP Website")));
 app.use(cookieparser());
 
+
 // Functions
+
+
+
 
 // Redirect user to the parameter page and passes in the session username
 // if present
@@ -209,8 +293,20 @@ app.post("/logout", async (req, res) => {
 // 404 page
 app.use(function(req,res){
   redirectToPageWithHeader(req, res.status(404), "404");
+
+
 });
 
-server.listen(3000, function () {
+server.listen(3000, async function(){
   console.log("server is listening on port: 3000");
+
+  try{
+    await client.connect();
+    lobbies = client.db("HIP-DIB").collection("lobbies");
+    console.log("connected to the HIP-DIB lobbies collection");
+  }
+  catch(e){
+    console.log(e);
+  }
+
 });
