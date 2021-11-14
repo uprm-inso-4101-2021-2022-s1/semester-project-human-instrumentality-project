@@ -305,8 +305,8 @@ socket.on("joined", async (lobbyId, player1, player2) =>{
     }else{//then "this" joined as the player2
         player.name = player2;
         opponent.name = player1;
-        pNameEl.innerHTML = player1;
-        oNameEl.innerHTML = player2;
+        pNameEl.innerHTML = player2;
+        oNameEl.innerHTML = player1;
         //call the actions since both players are now inside the section
         await socket.emit("getOpponentShot", lobbyId, player.name, opponent.name);
         //if this doesn't make sense or seems confusing please feel free to ask^
