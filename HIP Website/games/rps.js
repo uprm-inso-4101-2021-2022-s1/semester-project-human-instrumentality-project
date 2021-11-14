@@ -37,6 +37,9 @@ const roundRes2 = document.getElementById('roundResult2');
 
 const nextRoundEl = document.getElementById('nextRoundElement');
 
+//names
+const pNameEl = document.getElementById('pNameEl');
+const oNameEl = document.getElementById('oNameEl');
 
 //player class
 class Player{
@@ -83,7 +86,7 @@ class Player{
 
 
 class Opponent{
-    constructor(name, x,y,width,height,currentSelected,ready){
+    constructor(name, x,y,width,height,){
         this.name = name;
         this.x = x;
         this.y = y;
@@ -124,7 +127,6 @@ class Opponent{
     changeSelection(newSelection){
         this.currentSelected=newSelection;
     }
-
 }
 
 
@@ -135,10 +137,10 @@ let nextRoundCountDown = 5;
 
 let animationId;
 let countDownTimerId;
-let opponentPicked = false;//temp
 
+//the names are set later once players join*
 let player = new Player("", canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
-let opponent = new Opponent("", canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14); //meaning opponent could have an empty name
+let opponent = new Opponent("", canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14);
 
 let lobbyID;
 
@@ -155,17 +157,18 @@ function animate(){
     player.update();
     opponent.update();
     if(roundOver){
+        //if the round is over, first verify if the game is over before starting a new round
         if(pScore == 3){
             nextRoundEl.innerHTML = "You won!! Redirecting to play page in " + nextRoundCountDown + "...";
             if(nextRoundCountDown <= 0){
-                //move to the other page
+                //move to the play page
                 window.location = '/play';
             }
         }
         else if(oScore == 3){
             nextRoundEl.innerHTML = "You Lost!! Redirecting to play page in " + nextRoundCountDown + "...";
             if(nextRoundCountDown <= 0){
-                //move to the other page
+                //move to the play page
                 window.location = '/play';
             }
         }
@@ -174,8 +177,7 @@ function animate(){
             if(nextRoundCountDown <= 0){
                 resetRound();
             }
-        }
-        
+        } 
         opponent.draw();
     }
 
@@ -250,9 +252,7 @@ async function resetRound(){
     clearInterval(countDownTimerId);//cancel the counter such that it doesn't keep running 
     nextRoundCountDown = 5;//this line and the one above are not interchangeable**
 
-    opponentPicked = false;//temp
-
-    //new round, check if opponent shot again
+    //new round, check if opponent shot again (starts the loop on "app.js")
     await socket.emit("getOpponentShot", lobbyID, player.name, opponent.name);
     roundOver = false;
    
@@ -297,6 +297,7 @@ socket.on("connect", async () => {
 socket.on("joined", async (lobbyId, player1, player2) =>{
     if(player2 == ""){//then "this" joined as the player1
         player.name = player1;
+        pNameEl.innerHTML = player1;
         //start a loop in app.js that looks for when player2 joins
         await socket.emit('checkPlayer2', (lobbyId));
         //opponent's name stays empty
@@ -304,6 +305,8 @@ socket.on("joined", async (lobbyId, player1, player2) =>{
     }else{//then "this" joined as the player2
         player.name = player2;
         opponent.name = player1;
+        pNameEl.innerHTML = player1;
+        oNameEl.innerHTML = player2;
         //call the actions since both players are now inside the section
         await socket.emit("getOpponentShot", lobbyId, player.name, opponent.name);
         //if this doesn't make sense or seems confusing please feel free to ask^
@@ -320,6 +323,7 @@ socket.on("joined", async (lobbyId, player1, player2) =>{
 socket.on("setPlayer2", async (player2) =>{//gets back the opponent if he joined
     console.log(player2 + "joined");
     opponent.name = player2;
+    oNameEl.innerHTML = player2;
     //call the actions since both players are now inside the section
     await socket.emit("getOpponentShot", lobbyID, player.name, opponent.name);
     

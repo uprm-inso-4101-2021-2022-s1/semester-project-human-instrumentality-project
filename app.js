@@ -13,11 +13,18 @@ const database = require("./models/db");
 const app = express();
 const server = http.createServer(app);
 const User = require("./models/user");
-const cors = require('cors');
-const io = require('socket.io')(server);
+
+
+
+
+
+//----------------------EVERYTHING RELATED TO THE LOBBIES-----------------------------
+//*(These could maybe be moved to a different file eventually to avoid havging such a big "app.js")*
 
 const { MongoClient } = require('mongodb');
-const client = new MongoClient(process.env.MONGO_URI);
+const io = require('socket.io')(server);
+const cors = require('cors');
+const client = new MongoClient(process.env.MONGO_URI);//we actually have to remove the .env file from the github for security purposes***
 
 app.use(cors());
 
@@ -25,7 +32,6 @@ var lobbies;
 let activeRoomId;
 
 io.on('connection', (socket) => {
-
   socket.on('join', async (lobbyId, gameName) => {
     try{
       let lobby;
@@ -33,7 +39,7 @@ io.on('connection', (socket) => {
 
       //if there is no lobby available it will create and join a new lobby
       if(!result){
-        console.log("creating new lobby for " + gameName);
+        console.log("Creating new lobby for " + gameName);
         await lobbies.insertOne(
           {
             "_id": lobbyId,
@@ -42,18 +48,22 @@ io.on('connection', (socket) => {
             player2: "",//since player2 hasn't joined (new lobby)
             actions: []
             });
-        lobby = await lobbies.findOne({"_id": lobbyId});
-      }else{//exists
-        console.log("lobby exists")
+        lobby = await lobbies.findOne({"_id": lobbyId});//sets lobby to the one that was just created
+
+      }else{//lobby exists, just add the current sess to that lobby as player2
+        console.log("lobby exists");
         await lobbies.updateOne(result, {"$set": {player2: sess.username}});
-        lobby = await lobbies.findOne({"player2": sess.username});//since a lobby exists, we can't find the lobby with the passed lobbyId, hence, we look for the one the player2 was just added to
+        lobby = await lobbies.findOne({"player2": sess.username});
+        //^since a lobby exists, we can't find the lobby with the passed lobbyId(only for creating a new one), 
+        // hence, we look for the one the player2 was just added to
       }
       
-      // console.log(lobby);
+      // console.log(lobby);//debugging purposes
       socket.join(lobby._id);
       socket.emit("joined", lobby._id, lobby.player1,lobby.player2);
+      //^currently only works for rps lobbies, we must edit these methods to differentiate between them(shouldn't be too bad though) :)
       socket.activeRoom = lobby._id;
-      activeRoomId = socket.activeRoom
+      activeRoomId = socket.activeRoom;
 
     } catch(e) {
       console.error(e);
@@ -69,14 +79,13 @@ io.on('connection', (socket) => {
   socket.on('getOpponentShot', async (lobbyId, pName, oName) => {
     let done = false;
     try{
-      while(!done){
+      while(!done){//this loop essentially runs until the enemy shoots or someone leaves the lobby 
         let tempLobby = await lobbies.findOne({"_id": lobbyId});
         let actions = tempLobby.actions;
         actions.forEach(a => {
           if(a.includes(oName + " shot")){
             socket.emit("opponentShot", a.substring(a.length-1));
-            //resets the actions array for the next round
-            lobbies.updateOne({"_id": lobbyId} , {"$pull": {"actions": a}});
+            lobbies.updateOne({"_id": lobbyId} , {"$pull": {"actions": a}});//removes the action from the array for the next round
             done = true;
           }
         });    
@@ -89,7 +98,7 @@ io.on('connection', (socket) => {
   socket.on("checkPlayer2", async (lobbyId) => {
     let tempName = "";
     try{
-      while(tempName == ""){
+      while(tempName == ""){//this loop runs on the bakground searching for an update in the player2 field in the db
         let tempLobby = await lobbies.findOne({"_id": lobbyId});
         tempName = tempLobby.player2;
       }
@@ -98,18 +107,18 @@ io.on('connection', (socket) => {
     }
 
     console.log("Player2 joined.");
-    socket.emit("setPlayer2", (tempName));
+    socket.emit("setPlayer2", (tempName));//tells rps game that the opponent joined, starts game
   });
 
-  socket.on('disconnect', (socket)=>{
-    
-    //for now, i made it such that if a player leaves, the lobby is removed
+  socket.on('disconnect', (socket)=>{    
+    //for now, I made it such that if a player leaves, the lobby is removed
+    //this emit is called automatically after the user closes the tab*
     lobbies.deleteOne({"_id":activeRoomId});
     console.log("Disconnected from that room.");
-    
   });
-});
 
+});
+//-----------------------END OF EVERYTHING RELATED TO THE LOBBIES---------------------------
 
 
 
@@ -138,9 +147,6 @@ app.use(cookieparser());
 
 
 // Functions
-
-
-
 
 // Redirect user to the parameter page and passes in the session username
 // if present
@@ -321,8 +327,9 @@ server.listen(3000, async function(){
 
   try{
     await client.connect();
+    //gets the lobbies child collection from the database
     lobbies = client.db("HIP-DIB").collection("lobbies");
-    console.log("connected to the HIP-DIB lobbies collection");
+    console.log("connected to the HIP-DIB lobbies collection");//debugging purposes
   }
   catch(e){
     console.log(e);
