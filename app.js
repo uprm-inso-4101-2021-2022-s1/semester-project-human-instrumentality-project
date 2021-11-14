@@ -75,6 +75,8 @@ io.on('connection', (socket) => {
         actions.forEach(a => {
           if(a.includes(oName + " shot")){
             socket.emit("opponentShot", a.substring(a.length-1));
+            //resets the actions array for the next round
+            lobbies.updateOne({"_id": lobbyId} , {"$pull": {"actions": a}});
             done = true;
           }
         });    

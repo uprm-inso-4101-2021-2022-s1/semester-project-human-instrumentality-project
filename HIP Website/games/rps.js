@@ -252,6 +252,8 @@ function resetRound(){
 
     opponentPicked = false;//temp
 
+    //new round, check if opponent shot again
+    await socket.emit("getOpponentShot", lobbyID, player.name, opponent.name);
     roundOver = false;
    
 }
