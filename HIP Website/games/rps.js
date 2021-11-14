@@ -229,7 +229,7 @@ function roundOverCountDown(){
 }
 
 
-function resetRound(){
+async function resetRound(){
     player.changeSelection('r');
     player.ready = false; 
     
