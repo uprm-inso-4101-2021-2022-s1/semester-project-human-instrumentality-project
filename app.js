@@ -159,7 +159,6 @@ io.on('connection', async (socket) => {
 					if (lobby.actions) {
 						lobby.actions.forEach((a) => {
 							if (a.includes(subAction)) {
-								console.log(a);
 								socket.emit('actionFound', a);
 							}
 						});
