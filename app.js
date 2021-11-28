@@ -129,6 +129,8 @@ io.on('connection', async (socket) => {
 				//this loop runs on the background searching for more players
 				lobby = await findLobbyByID(id);
 			}
+
+			socket.emit('lobbyFilled', lobby);
 		} catch (e) {
 			console.log(
 				'Lobby was most likely deleted, searching for players failed.'
@@ -155,7 +157,7 @@ io.on('connection', async (socket) => {
 						lobby.actions.forEach((a) => {
 							console.log(a);
 							console.log(subAction);
-							console.log("====");
+							console.log('====');
 							if (a.includes(subAction)) {
 								foundAction = a;
 							}

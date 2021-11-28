@@ -326,6 +326,12 @@ readyBtn.addEventListener('click', () => {
 });
 
 async function startGame(lobby) {
+	const player1 = lobby.players[0];
+	const player2 = lobby.players[1];
+	player.username = player2.username;
+	opponent.username = player1.username;
+	pNameEl.innerHTML = player2.username;
+	oNameEl.innerHTML = player1.username;
 	let action = `${opponent.username} shot:`;
 
 	// Wait for the opponent to shoot, then remove their action
@@ -363,6 +369,11 @@ socket.on('createLobbySuccess', async (lobby) => {
 
 socket.on('failedToJoin', async (lobby) => {});
 
+socket.on('lobbyFilled', async (lobby) => {
+	// Start the game!
+	startGame(lobby);
+});
+
 socket.on('joinedSuccessfully', async (lobby) => {
 	const player1 = lobby.players[0];
 	const player2 = lobby.players[1];
@@ -374,11 +385,6 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		await socket.emit('waitUntilFull', lobby);
 	} else {
 		//then "this" joined as the player2
-		player.username = player2.username;
-		opponent.username = player1.username;
-		pNameEl.innerHTML = player2.username;
-		oNameEl.innerHTML = player1.username;
-
 		// Start the game!
 		startGame(lobby);
 	}
