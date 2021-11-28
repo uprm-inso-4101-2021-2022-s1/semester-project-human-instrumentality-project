@@ -325,13 +325,21 @@ readyBtn.addEventListener('click', () => {
 	scissorBtn.style.display = 'none';
 });
 
-async function startGame(lobby) {
-	const player1 = lobby.players[0];
-	const player2 = lobby.players[1];
-	player.username = player2.username;
-	opponent.username = player1.username;
-	pNameEl.innerHTML = player2.username;
-	oNameEl.innerHTML = player1.username;
+async function startGame(lobby, userPlayerNumber) {
+	let player1, player2;
+	if (userPlayerNumber === 1){
+		player1 = lobby.players[0];
+		player2 = lobby.players[1];
+	}
+	else{ // 2
+		player1 = lobby.players[1];
+		player2 = lobby.players[0];
+	}
+	
+	player.username = player1.username;
+	opponent.username = player2.username;
+	pNameEl.innerHTML = player1.username;
+	oNameEl.innerHTML = player2.username;
 	let action = `${opponent.username} shot:`;
 
 	// Wait for the opponent to shoot, then remove their action
@@ -371,7 +379,8 @@ socket.on('failedToJoin', async (lobby) => {});
 
 socket.on('lobbyFilled', async (lobby) => {
 	// Start the game!
-	startGame(lobby);
+	// Player entered first!
+	startGame(lobby, 1);
 });
 
 socket.on('joinedSuccessfully', async (lobby) => {
@@ -386,7 +395,8 @@ socket.on('joinedSuccessfully', async (lobby) => {
 	} else {
 		//then "this" joined as the player2
 		// Start the game!
-		startGame(lobby);
+		// Player entered second!
+		startGame(lobby, 2);
 	}
 	currentLobby = lobby;
 	socket.emit('addAction', player.username + ' joined the lobby.');
