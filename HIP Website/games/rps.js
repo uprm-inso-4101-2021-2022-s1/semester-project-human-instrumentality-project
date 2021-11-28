@@ -312,8 +312,8 @@ scissorBtn.addEventListener('click', () => {
 
 readyBtn.addEventListener('click', () => {
 	socket.emit(
-		'action',
-		`${player.username} ' shot:' ${player.currentSelected}`
+		'addAction',
+		`${player.username} shot:${player.currentSelected}`
 	);
 	player.ready = true;
 

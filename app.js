@@ -150,18 +150,18 @@ io.on('connection', async (socket) => {
 		try {
 			while (!foundAction) {
 				//this loop essentially runs until the subaction is found, or someone leaves the lobby
-				await lobbies
-					.findOne({ _id: lobbyId })
-					.then((lobby) => {
-						if (lobby && lobby.actions) {
-							lobby.actions.forEach((a) => {
-								if (a.includes(subAction)) {
-									done = true;
-									foundAction = a;
-								}
-							});
-						}
-					});
+				await lobbies.findOne({ _id: lobbyId }).then((lobby) => {
+					if (lobby && lobby.actions) {
+						lobby.actions.forEach((a) => {
+							console.log(a);
+							console.log(subAction);
+							console.log("====");
+							if (a.includes(subAction)) {
+								foundAction = a;
+							}
+						});
+					}
+				});
 			}
 
 			socket.emit('actionFound', action);
@@ -174,11 +174,8 @@ io.on('connection', async (socket) => {
 		}
 	});
 
-	socket.on('removeAction', async (action) => {
-		lobbies.updateOne(
-			{ _id: currentLobby._id },
-			{ $push: { actions: action } }
-		);
+	socket.on('removeAction', async (id, action) => {
+		lobbies.updateOne({ _id: id }, { $pull: { actions: action } });
 	});
 
 	socket.on('disconnect', (socket) => {
