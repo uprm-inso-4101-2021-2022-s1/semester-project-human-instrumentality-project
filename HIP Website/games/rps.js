@@ -382,7 +382,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		player.username = player1.username;
 		pNameEl.innerHTML = player1.username;
 		//start a loop in app.js that looks for when player2 joins
-		await socket.emit('waitUntilFull', lobby);
+		socket.emit('waitUntilFull', lobby._id);
 	} else {
 		//then "this" joined as the player2
 		// Start the game!

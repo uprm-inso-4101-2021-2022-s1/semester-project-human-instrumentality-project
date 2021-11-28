@@ -43,11 +43,7 @@ async function findLobbyByID(lobbyId) {
 }
 
 function lobbyIsFull(lobby) {
-	if (lobby) {
-		if (!lobby.players) return false;
-		return lobby.players.length === lobby.maxPlayers;
-	}
-	return true;
+	return lobby.players.length === lobby.maxPlayers;
 }
 
 io.on('connection', async (socket) => {
@@ -76,7 +72,10 @@ io.on('connection', async (socket) => {
 		let foundLobby;
 
 		await lobbies.find().forEach(function (lobby) {
-			if (!lobbyIsFull(lobby) && lobby.gameName === gameName) {
+			if (
+				!lobby.players ||
+				(!lobbyIsFull(lobby) && lobby.gameName === gameName)
+			) {
 				foundLobby = lobby;
 			}
 		});
@@ -99,7 +98,8 @@ io.on('connection', async (socket) => {
 
 		// TEMP: Assign the username to the user
 		player.username = sess.username;
-		if (lobbyIsFull(lobby)) {
+
+		if (lobby.players && lobbyIsFull(lobby)) {
 			console.log(`Cannot join lobby ${id} because it is full`);
 			socket.emit('failedToJoin', lobby);
 		} else {
@@ -122,19 +122,21 @@ io.on('connection', async (socket) => {
 	});
 
 	socket.on('waitUntilFull', async (id) => {
-		try {
-			let lobby;
-			console.log('Waiting for more players...');
-			while (!lobbyIsFull(lobby)) {
-				//this loop runs on the background searching for more players
-				lobby = await findLobbyByID(id);
-			}
-
-			socket.emit('lobbyFilled', lobby);
-		} catch (e) {
-			console.log(
-				'Lobby was most likely deleted, searching for players failed.'
-			);
+		console.log('Waiting for more players...');
+		let error = false;
+		while (!error) {
+			await findLobbyByID(id)
+				.then((lobby) => {
+					if (lobbyIsFull(lobby)) {
+						socket.emit('lobbyFilled', lobby);
+					}
+				})
+				.catch((err) => {
+					console.log(
+						'Lobby was most likely deleted, searching for players failed.'
+					);
+					error = true;
+				});
 		}
 	});
 
@@ -148,31 +150,26 @@ io.on('connection', async (socket) => {
 	});
 
 	socket.on('waitForAction', async (lobbyId, subAction) => {
-		let foundAction;
-		try {
-			while (!foundAction) {
-				//this loop essentially runs until the subaction is found, or someone leaves the lobby
-				await lobbies.findOne({ _id: lobbyId }).then((lobby) => {
-					if (lobby && lobby.actions) {
+		let error = false;
+		while (!error) {
+			//this loop essentially runs until the subaction is found, or someone leaves the lobby
+			await lobbies
+				.findOne({ _id: lobbyId })
+				.then((lobby) => {
+					if (lobby.actions) {
 						lobby.actions.forEach((a) => {
-							console.log(a);
-							console.log(subAction);
-							console.log('====');
 							if (a.includes(subAction)) {
-								foundAction = a;
+								socket.emit('actionFound', action);
 							}
 						});
 					}
+				})
+				.catch((err) => {
+					console.log(
+						'Lobby was most likely deleted, searching for actions failed.'
+					);
+					error = true;
 				});
-			}
-
-			socket.emit('actionFound', action);
-		} catch (e) {
-			console.log(
-				'Lobby was most likely deleted, searching for actions failed.'
-			);
-
-			console.log(e);
 		}
 	});
 
