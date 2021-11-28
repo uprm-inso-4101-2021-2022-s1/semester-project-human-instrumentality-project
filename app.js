@@ -150,14 +150,18 @@ io.on('connection', async (socket) => {
 		try {
 			while (!foundAction) {
 				//this loop essentially runs until the subaction is found, or someone leaves the lobby
-				let tempLobby = await lobbies.findOne({ _id: lobbyId });
-				let actions = tempLobby.actions;
-				actions.forEach((a) => {
-					if (a.includes(subAction)) {
-						done = true;
-						foundAction = a;
-					}
-				});
+				await lobbies
+					.findOne({ _id: lobbyId })
+					.then((lobby) => {
+						if (lobby && lobby.actions) {
+							lobby.actions.forEach((a) => {
+								if (a.includes(subAction)) {
+									done = true;
+									foundAction = a;
+								}
+							});
+						}
+					});
 			}
 
 			socket.emit('actionFound', action);
@@ -165,6 +169,8 @@ io.on('connection', async (socket) => {
 			console.log(
 				'Lobby was most likely deleted, searching for actions failed.'
 			);
+
+			console.log(e);
 		}
 	});
 

@@ -329,8 +329,8 @@ async function startGame(lobby) {
 	let action = `${opponent.username} shot:`;
 
 	// Wait for the opponent to shoot, then remove their action
-	await socket.emit('waitForAction', action);
-	await socket.emit('removeAction', action);
+	await socket.emit('waitForAction', lobby._id, action);
+	await socket.emit('removeAction', lobby._id, action);
 }
 
 // When the user connects, join an available lobby!
