@@ -6,6 +6,9 @@ const canvas=document.getElementById('canvastictactoe');
       //stores the status of the game, whether its over or still in play
       let gameStatus = "Game On";
 
+      //counts the times a player has played a turn
+      let totalTurns =0;
+
       //Gets all Boxes elements
       const boxes = document.getElementsByClassName("box");
 
@@ -15,11 +18,14 @@ const canvas=document.getElementById('canvastictactoe');
         boxes[i].addEventListener("click", function() {
           //checks if the box has an x or an o in it and also checks if the game is still on
           if (boxes[i].innerHTML.trim() == "" && gameStatus == "Game On") {
-            //adds x or o for the current play in their choosen box
+            //adds x or o for the current play in their chosen box
             boxes[i].innerHTML = currentPlayer;
 
             //changes player turns
             currentPlayer = currentPlayer == "x" ? "o" : "x";
+
+            //changes total turns count
+            totalTurns++;
 
             //changes player's turn label on top of the game
             document.getElementById(
@@ -76,6 +82,11 @@ const canvas=document.getElementById('canvastictactoe');
             ) {
               showWinner(2, 4, 6);
             }
+            //verify if it's a draw
+            else if (totalTurns == 9){
+              drawGame();
+
+            }
           }
         });
       }
@@ -89,6 +100,7 @@ const canvas=document.getElementById('canvastictactoe');
         }
         currentPlayer = "x";
         document.getElementById("message").style.display = "none";
+        document.getElementById("drawResult").style.display = "none";
         document.getElementById("player").innerHTML = "X";
         gameStatus = "Game On";
       });
@@ -106,5 +118,13 @@ const canvas=document.getElementById('canvastictactoe');
         document.getElementById("message").style.display = "block";
         gameStatus = "Game Over";
       }
+
+      function drawGame(){
+        document.getElementById("drawResult").style.display = "block";
+        gameStatus = "Game Over";
+        totalTurns=0;
+      }
+
+
 
       animate();
