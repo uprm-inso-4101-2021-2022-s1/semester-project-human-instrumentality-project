@@ -35,10 +35,15 @@ const client = new MongoClient(process.env.MONGO_URI); //we actually have to rem
 
 app.use(cors());
 
-var lobbies;
+let lobbies;
+let currentLobby;
 
 async function findLobbyByID(lobbyId) {
 	return lobbies.findOne({ _id: lobbyId });
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function lobbyIsFull(lobby) {
@@ -103,22 +108,26 @@ io.on('connection', async (socket) => {
 				{ _id: id },
 				{
 					$push: { players: player },
-					$set: { currentPlayers: lobby.currentPlayers + 1 },
 				}
 			);
 
-			// The socket should join the updated lobby
-			lobby = await findLobbyByID(id);
+			// Give MongoDB 2 seconds to update the lobby
+			await sleep(2000);
 
-			socket.join(id);
-			socket.activeRoom = lobby;
-			await socket.emit('joinedSuccessfully', lobby);
+			// The socket should join the updated lobby
+			findLobbyByID(id).then((lobby) => {
+				socket.join(id);
+				currentLobby = lobby;
+				console.log(currentLobby);
+				socket.emit('joinedSuccessfully', currentLobby);
+			});
 		}
 	});
 
 	socket.on('waitUntilFull', async (id) => {
 		try {
 			let lobby;
+			console.log("Waiting for more players...");
 			while (!lobbyIsFull(lobby)) {
 				//this loop runs on the background searching for more players
 				lobby = await findLobbyByID(id);
@@ -132,21 +141,21 @@ io.on('connection', async (socket) => {
 
 	socket.on('addAction', (action) => {
 		lobbies.updateOne(
-			{ _id: socket.activeRoom._id },
+			{ _id: currentLobby._id },
 			{ $push: { actions: action } }
 		);
-		io.to(socket.activeRoom.id).emit('action', action);
+		io.to(currentLobby._id).emit('action', action);
 	});
 
 	socket.on('waitForAction', async (lobbyId, subAction) => {
 		let foundAction;
 		try {
 			while (!foundAction) {
-				//this loop essentially runs until the enemy shoots or someone leaves the lobby
+				//this loop essentially runs until the subaction is found, or someone leaves the lobby
 				let tempLobby = await lobbies.findOne({ _id: lobbyId });
 				let actions = tempLobby.actions;
 				actions.forEach((a) => {
-					if (a.includes(subaction)) {
+					if (a.includes(subAction)) {
 						done = true;
 						foundAction = a;
 					}
@@ -163,7 +172,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('removeAction', async (action) => {
 		lobbies.updateOne(
-			{ _id: socket.activeRoom._id },
+			{ _id: currentLobby._id },
 			{ $push: { actions: action } }
 		);
 	});
@@ -172,10 +181,11 @@ io.on('connection', async (socket) => {
 		//for now, I made it such that if a player leaves, the lobby is removed
 		//this emit is called automatically after the user closes the tab*
 		console.log('Disconnected');
-		if (socket.activeRoom) {
-			lobbies.deleteOne({ _id: socket.activeRoom._id });
+		if (currentLobby) {
+			let id = currentLobby._id;
+			lobbies.deleteOne({ _id: id });
 			console.log(
-				`Disconnected from room with ID: ${socket.activeRoom._id}`
+				`Disconnected from room with ID: ${id}`
 			);
 		}
 	});
