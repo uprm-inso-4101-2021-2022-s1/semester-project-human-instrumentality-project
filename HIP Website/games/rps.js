@@ -313,7 +313,7 @@ scissorBtn.addEventListener('click', () => {
 readyBtn.addEventListener('click', () => {
 	socket.emit(
 		'addAction',
-		`${player.username} shot:${player.currentSelected}`
+		`Round #${oScore + pScore + 1}: ${player.username} shot:${player.currentSelected}`
 	);
 	player.ready = true;
 
@@ -340,11 +340,10 @@ async function startGame(lobby, userPlayerNumber) {
 	opponent.username = player2.username;
 	pNameEl.innerHTML = player1.username;
 	oNameEl.innerHTML = player2.username;
-	let action = `${opponent.username} shot:`;
+	let action = `Round #${oScore + pScore + 1}: ${opponent.username} shot:`;
 
 	// Wait for the opponent to shoot, then remove their action
 	await socket.emit('waitForAction', lobby._id, action);
-	await socket.emit('removeAction', lobby._id, action);
 }
 
 // When the user connects, join an available lobby!
@@ -403,7 +402,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 	animate();
 });
 
-socket.on('actionFound', (action) => {
+socket.on('actionFound', async (action) => {
 	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
 	opponent.ready = true;
 });

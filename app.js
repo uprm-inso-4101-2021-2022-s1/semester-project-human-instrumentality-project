@@ -159,7 +159,7 @@ io.on('connection', async (socket) => {
 					if (lobby.actions) {
 						lobby.actions.forEach((a) => {
 							if (a.includes(subAction)) {
-								socket.emit('actionFound', action);
+								socket.emit('actionFound', a);
 							}
 						});
 					}
@@ -168,12 +168,14 @@ io.on('connection', async (socket) => {
 					console.log(
 						'Lobby was most likely deleted, searching for actions failed.'
 					);
+					console.log(err);
 					error = true;
 				});
 		}
 	});
 
 	socket.on('removeAction', async (id, action) => {
+		console.log(action);
 		lobbies.updateOne({ _id: id }, { $pull: { actions: action } });
 	});
 
