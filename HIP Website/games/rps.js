@@ -326,7 +326,7 @@ function startGame(lobby) {
 	let action = `${opponent.username} shot:`;
 
 	// Wait for the opponent to shoot, then remove their action
-	socket.emit('waitForAction', action);
+	socket.emit('waitForAction', action); // add await here?
 	opponent.ready = true;
 	opponent.currentSelected = currentSelected;
 	socket.emit('removeAction', action);
@@ -381,10 +381,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		// Start the game!
 		startGame(lobby);
 	}
-
 	currentLobby = lobby;
-	console.log(lobby);
-
 	socket.emit('addAction', player.username + ' joined the lobby.');
 	animate();
 });
