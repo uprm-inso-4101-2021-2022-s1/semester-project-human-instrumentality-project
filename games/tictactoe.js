@@ -107,6 +107,7 @@ const canvas=document.getElementById('canvastictactoe');
 
       //displays the winner
       function showWinner(x, y, z) {
+        totalTurns = 0;
         boxes[x].style.background = "#0d8b70";
         boxes[x].style.color = "white";
         boxes[y].style.background = "#0d8b70";
