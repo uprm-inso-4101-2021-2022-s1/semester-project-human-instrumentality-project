@@ -186,6 +186,8 @@ let opponent = new Opponent(
 );
 
 let currentLobby;
+let isOpponent = false;
+let round = 1;
 
 function animate() {
 	canvas.width = innerWidth;
@@ -292,8 +294,8 @@ async function resetRound() {
 
 	clearInterval(countDownTimerId); //cancel the counter such that it doesn't keep running
 	nextRoundCountDown = 5; //this line and the one above are not interchangeable**
-
-	startGame();
+	round++;
+	startGame(currentLobby);
 	roundOver = false;
 }
 
@@ -313,7 +315,7 @@ scissorBtn.addEventListener('click', () => {
 readyBtn.addEventListener('click', () => {
 	socket.emit(
 		'addAction',
-		`${player.username} shot:${player.currentSelected}`
+		`Round #${round}: ${player.username} shot:${player.currentSelected}`
 	);
 	player.ready = true;
 
@@ -325,26 +327,26 @@ readyBtn.addEventListener('click', () => {
 	scissorBtn.style.display = 'none';
 });
 
-async function startGame(lobby, userPlayerNumber) {
+async function startGame() {
 	let player1, player2;
-	if (userPlayerNumber === 1){
-		player1 = lobby.players[0];
-		player2 = lobby.players[1];
+	if (!isOpponent){
+		player1 = currentLobby.players[0];
+		player2 = currentLobby.players[1];
 	}
-	else{ // 2
-		player1 = lobby.players[1];
-		player2 = lobby.players[0];
+	else{
+		player1 = currentLobby.players[1];
+		player2 = currentLobby.players[0];
 	}
 	
 	player.username = player1.username;
 	opponent.username = player2.username;
 	pNameEl.innerHTML = player1.username;
 	oNameEl.innerHTML = player2.username;
-	let action = `${opponent.username} shot:`;
+	let action = `Round #${round}: ${opponent.username} shot:`;
+	console.log(action);
 
-	// Wait for the opponent to shoot, then remove their action
-	await socket.emit('waitForAction', lobby._id, action);
-	await socket.emit('removeAction', lobby._id, action);
+	// Wait for the opponent to shoot
+	await socket.emit('waitForAction', currentLobby._id, action);
 }
 
 // When the user connects, join an available lobby!
@@ -364,46 +366,51 @@ socket.on('noLobbyFound', async () => {
 // A vacant lobby was found. Join it!
 // Emits 'joinedSuccessfully' or 'failedToJoin'
 socket.on('lobbyFound', async (lobby) => {
-	console.log('Found lobby: ' + lobby);
-	socket.emit('joinLobby', lobby._id, player);
+	currentLobby = lobby;
+	console.log('Found lobby: ' + currentLobby);
+	socket.emit('joinLobby', currentLobby._id, player);
 });
 
 // A lobby was creatted successfully, join it!
 // Emits 'joinedSuccessfully' or 'failedToJoin'
 socket.on('createLobbySuccess', async (lobby) => {
+	currentLobby = lobby;
 	console.log('Lobby created successfully!');
-	socket.emit('joinLobby', lobby._id, player);
+	socket.emit('joinLobby', currentLobby._id, player);
 });
 
 socket.on('failedToJoin', async (lobby) => {});
 
 socket.on('lobbyFilled', async (lobby) => {
+	currentLobby = lobby;
 	// Start the game!
 	// Player entered first!
-	startGame(lobby, 1);
+	startGame(currentLobby);
 });
 
 socket.on('joinedSuccessfully', async (lobby) => {
-	const player1 = lobby.players[0];
-	const player2 = lobby.players[1];
+	currentLobby = lobby;
+	const player1 = currentLobby.players[0];
+	const player2 = currentLobby.players[1];
 	if (!player2) {
 		//then "this" joined as the player1
 		player.username = player1.username;
 		pNameEl.innerHTML = player1.username;
 		//start a loop in app.js that looks for when player2 joins
-		socket.emit('waitUntilFull', lobby._id);
+		socket.emit('waitUntilFull', currentLobby._id);
 	} else {
 		//then "this" joined as the player2
 		// Start the game!
 		// Player entered second!
-		startGame(lobby, 2);
+		isOpponent = true;
+		startGame(currentLobby);
 	}
-	currentLobby = lobby;
-	socket.emit('addAction', player.username + ' joined the lobby.');
+	currentcurrentLobby = currentLobby;
+	socket.emit('addAction', player.username + ' joined the currentLobby.');
 	animate();
 });
 
-socket.on('actionFound', (action) => {
+socket.on('actionFound', async (action) => {
 	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
 	opponent.ready = true;
 });
