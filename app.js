@@ -42,10 +42,6 @@ async function findLobbyByID(lobbyId) {
 	return lobbies.findOne({ _id: lobbyId });
 }
 
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 function lobbyIsFull(lobby) {
 	if (lobby) {
 		if (!lobby.players) return false;
@@ -60,23 +56,26 @@ io.on('connection', async (socket) => {
 		// Create a lobby and insert it to the lobbies variable
 		console.log('Creating new lobby for: ' + gameName);
 
-		await lobbies.insertOne({
-			_id: id,
-			gameName: gameName,
-			maxPlayers: maxPlayers,
-		});
-
-		let lobby = await findLobbyByID(id);
-		// Let the game define what should happen after the lobby is created
-		await socket.emit('createLobbySuccess', lobby);
+		lobbies
+			.insertOne({
+				_id: id,
+				gameName: gameName,
+				maxPlayers: maxPlayers,
+			})
+			.then((doc) => {
+				// Let the game define what should happen after the lobby is created
+				findLobbyByID(id).then((lobby) =>
+					socket.emit('createLobbySuccess', lobby)
+				);
+			});
 	});
 
 	// Called when the user wants to find an available lobby
 	// for their specific game (RPS, Blackjack, etc)
 	socket.on('findAvailableLobby', async (gameName) => {
-		var foundLobby;
+		let foundLobby;
 
-		lobbies.find().forEach(function (lobby) {
+		await lobbies.find().forEach(function (lobby) {
 			if (!lobbyIsFull(lobby) && lobby.gameName === gameName) {
 				foundLobby = lobby;
 			}
@@ -104,30 +103,28 @@ io.on('connection', async (socket) => {
 			console.log(`Cannot join lobby ${id} because it is full`);
 			socket.emit('failedToJoin', lobby);
 		} else {
-			lobbies.updateOne(
-				{ _id: id },
-				{
-					$push: { players: player },
-				}
-			);
-
-			// Give MongoDB 2 seconds to update the lobby
-			await sleep(2000);
-
-			// The socket should join the updated lobby
-			findLobbyByID(id).then((lobby) => {
-				socket.join(id);
-				currentLobby = lobby;
-				console.log(currentLobby);
-				socket.emit('joinedSuccessfully', currentLobby);
-			});
+			lobbies
+				.updateOne(
+					{ _id: id },
+					{
+						$push: { players: player },
+					}
+				)
+				.then((doc) => {
+					// The socket should join the updated lobby
+					findLobbyByID(id).then((lobby) => {
+						socket.join(id);
+						currentLobby = lobby;
+						socket.emit('joinedSuccessfully', currentLobby);
+					});
+				});
 		}
 	});
 
 	socket.on('waitUntilFull', async (id) => {
 		try {
 			let lobby;
-			console.log("Waiting for more players...");
+			console.log('Waiting for more players...');
 			while (!lobbyIsFull(lobby)) {
 				//this loop runs on the background searching for more players
 				lobby = await findLobbyByID(id);
@@ -140,11 +137,12 @@ io.on('connection', async (socket) => {
 	});
 
 	socket.on('addAction', (action) => {
-		lobbies.updateOne(
-			{ _id: currentLobby._id },
-			{ $push: { actions: action } }
-		);
-		io.to(currentLobby._id).emit('action', action);
+		lobbies
+			.updateOne(
+				{ _id: currentLobby._id },
+				{ $push: { actions: action } }
+			)
+			.then((doc) => io.to(currentLobby._id).emit('action', action));
 	});
 
 	socket.on('waitForAction', async (lobbyId, subAction) => {
@@ -183,10 +181,9 @@ io.on('connection', async (socket) => {
 		console.log('Disconnected');
 		if (currentLobby) {
 			let id = currentLobby._id;
-			lobbies.deleteOne({ _id: id });
-			console.log(
-				`Disconnected from room with ID: ${id}`
-			);
+			lobbies
+				.deleteOne({ _id: id })
+				.then(console.log(`Disconnected from room with ID: ${id}`));
 		}
 	});
 });

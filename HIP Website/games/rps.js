@@ -322,14 +322,12 @@ readyBtn.addEventListener('click', () => {
 	scissorBtn.style.display = 'none';
 });
 
-function startGame(lobby) {
+async function startGame(lobby) {
 	let action = `${opponent.username} shot:`;
 
 	// Wait for the opponent to shoot, then remove their action
-	socket.emit('waitForAction', action);
-	opponent.ready = true;
-	opponent.currentSelected = currentSelected;
-	socket.emit('removeAction', action);
+	await socket.emit('waitForAction', action);
+	await socket.emit('removeAction', action);
 }
 
 // When the user connects, join an available lobby!
@@ -381,10 +379,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		// Start the game!
 		startGame(lobby);
 	}
-
 	currentLobby = lobby;
-	console.log(lobby);
-
 	socket.emit('addAction', player.username + ' joined the lobby.');
 	animate();
 });
