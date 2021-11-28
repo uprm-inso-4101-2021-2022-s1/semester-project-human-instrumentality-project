@@ -311,7 +311,10 @@ scissorBtn.addEventListener('click', () => {
 });
 
 readyBtn.addEventListener('click', () => {
-	socket.emit('action', `${player.username} ' shot:' ${player.currentSelected}`);
+	socket.emit(
+		'action',
+		`${player.username} ' shot:' ${player.currentSelected}`
+	);
 	player.ready = true;
 
 	//removes all the buttons such that they can't be used if the player is ready
@@ -333,28 +336,28 @@ async function startGame(lobby) {
 // When the user connects, join an available lobby!
 // Emits either 'noLobbyFound', or 'lobbyFound'
 socket.on('connect', async () => {
-    console.log("Someone connected!");
+	console.log('Someone connected!');
 	socket.emit('findAvailableLobby', 'RPS');
 });
 
 // Create a lobby if none is found.
 // Emits 'createLobbySuccess' on creation
 socket.on('noLobbyFound', async () => {
-    console.log("No lobby found. Creating new lobby");
+	console.log('No lobby found. Creating new lobby');
 	socket.emit('createLobby', Date.now(), 'RPS', 2);
 });
 
 // A vacant lobby was found. Join it!
 // Emits 'joinedSuccessfully' or 'failedToJoin'
 socket.on('lobbyFound', async (lobby) => {
-    console.log("Found lobby: " + lobby);
+	console.log('Found lobby: ' + lobby);
 	socket.emit('joinLobby', lobby._id, player);
 });
 
 // A lobby was creatted successfully, join it!
 // Emits 'joinedSuccessfully' or 'failedToJoin'
 socket.on('createLobbySuccess', async (lobby) => {
-    console.log("Lobby created successfully!");
+	console.log('Lobby created successfully!');
 	socket.emit('joinLobby', lobby._id, player);
 });
 
