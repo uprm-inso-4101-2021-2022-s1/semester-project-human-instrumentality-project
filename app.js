@@ -123,19 +123,20 @@ io.on('connection', async (socket) => {
 
 	socket.on('waitUntilFull', async (id) => {
 		console.log('Waiting for more players...');
-		let error = false;
-		while (!error) {
+		let end = false;
+		while (!end) {
 			await findLobbyByID(id)
 				.then((lobby) => {
 					if (lobbyIsFull(lobby)) {
 						socket.emit('lobbyFilled', lobby);
+						end = true;
 					}
 				})
 				.catch((err) => {
 					console.log(
 						'Lobby was most likely deleted, searching for players failed.'
 					);
-					error = true;
+					end = true;
 				});
 		}
 	});
@@ -150,8 +151,8 @@ io.on('connection', async (socket) => {
 	});
 
 	socket.on('waitForAction', async (lobbyId, subAction) => {
-		let error = false;
-		while (!error) {
+		let end = false;
+		while (!end) {
 			//this loop essentially runs until the subaction is found, or someone leaves the lobby
 			await lobbies
 				.findOne({ _id: lobbyId })
@@ -160,6 +161,7 @@ io.on('connection', async (socket) => {
 						lobby.actions.forEach((a) => {
 							if (a.includes(subAction)) {
 								socket.emit('actionFound', a);
+								end = true;
 							}
 						});
 					}
@@ -169,7 +171,7 @@ io.on('connection', async (socket) => {
 						'Lobby was most likely deleted, searching for actions failed.'
 					);
 					console.log(err);
-					error = true;
+					end = true;
 				});
 		}
 	});

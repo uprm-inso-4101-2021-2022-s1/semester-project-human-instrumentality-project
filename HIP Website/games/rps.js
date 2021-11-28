@@ -405,8 +405,8 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		isOpponent = true;
 		startGame(currentLobby);
 	}
-	currentcurrentLobby = currentLobby;
-	socket.emit('addAction', player.username + ' joined the currentLobby.');
+	currentLobby = lobby;
+	socket.emit('addAction', player.username + ' joined the lobby.');
 	animate();
 });
 
