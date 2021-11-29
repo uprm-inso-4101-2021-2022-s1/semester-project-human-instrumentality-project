@@ -1,0 +1,57 @@
+<style>
+    body {
+        background-color: rgb(26, 24, 24);
+        margin: 0;
+    }
+    button{
+        background-color: lightseagreen;
+        color: white;
+        border-color: transparent;
+        border-radius: 5px;
+        font-size: x-large;
+        font-weight: 900;
+        height: 100%;
+        width: 20%;
+        margin: 5;
+        padding: 5;       
+    }
+    button:hover{
+        background-color: teal;
+    }
+
+</style>
+
+<div style="position: fixed; margin-left: 2%; margin-top: 5%;height: 100%; font-size: 2rem; display: flex; flex-direction: column; align-items: center;">
+    <h1 style="color: teal">P1's hand</h1>
+    <p style="color: red;font-size: 5rem; margin: 50 0 4 0; font-weight: 600;"><span id="pCard">0</span></p>
+    <p style="color:cyan; font-size: 4rem; margin: 50 0 4 0; margin-top: 70%; font-weight: 600;"><span id="pSum"></span></p> 
+    <p id ="roundResult1" style="position: fixed; margin-top: 25%; color: white; font-size: 2rem;"></p>
+</div>
+
+<div style="position: fixed; left: 44.5%; margin-top: 0%;height: 100%; font-size: 2rem; display: flex; flex-direction: column; align-items: center;">
+    <h1 style="color: teal">Table</h1>
+    <img src="../images/rock2.png" alt="paper2" style="margin-top: -50%; margin-left: 8%; max-width:128px; max-height:128px; transform:rotate(270deg)">
+    <p style="color:red; font-size: 5rem; margin: 50 0 4 0; margin-top: 70%; font-weight: 600;"><span id="tCard">0</span></p>
+</div>
+
+<div style="position: fixed; right: 0; margin-right: 2%; margin-top: 5%; font-size: 2rem; display: flex; flex-direction: column; align-items: center;">
+    <h1 style="color: teal">P2's hand</h1>
+    <p style="color: red; font-size: 5rem; margin: 50 0 4 0; font-weight: 600;"><span id="oCard">0</span></p>
+    <p style="color:cyan; font-size: 4rem; margin: 50 0 4 0; margin-top: 70%; font-weight: 600;"><span id="oSum"></span></p>
+    <span><p id="opponentsPick" style="color: white; font-size: 2rem; margin-bottom: 0; padding-bottom: 0;"></p></span>
+    <p id ="roundResult2" style="position: fixed; bottom: 40%; color: white; font-size: 2rem;"></p>
+</div>
+
+<div style="position: fixed;display: flex; flex-direction: column;inset: 0; align-items: center;">
+    <div style="color: white; margin-top: 30%; display: flex; flex-direction: column; align-items: center; justify-items: center;">
+        <p style="font-size: 5rem; margin: 50 0 4 0; font-weight: 600;"><span id="pScore">0</span> : <span id="oScore">0</span></p>
+        <p style="font-size: 2rem; margin: 40 0 0 0; "><span id="nextRoundElement"></span></p>
+    </div>  
+    <div style="margin-top: 0%; width: 50%; display: flex; flex-direction: row; justify-content: center; ">
+        <button id="rock">Hit</button>
+        <button id="scissors">Stay</button>
+    </div>
+</div>
+
+<canvas id="canvasbjack"></canvas>
+<script src="bjack.js"></script>
