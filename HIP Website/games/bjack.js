@@ -385,7 +385,6 @@ async function startGime() {
 		player1 = currentLobby.players[1];
 		player2 = currentLobby.players[0];
 	}
-	resetRound();
 	player.username = player1.username;
 	opponent.username = player2.username;
 	pNameEl.innerHTML = player1.username;
