@@ -169,7 +169,7 @@ let cardDrawStartTime = 1;
 
 let animationId;
 let countDownTimerId;
-let playerPicked = false;
+//let playerPicked = false;
 let opponentPicked = false;//temp
 
 let currentLobby;
@@ -295,7 +295,7 @@ function resetRound(){
     opponent.changeSelection('r');
     opponent.ready = false;
 
-    playerPicked = false;
+    //playerPicked = false;
     opponentPicked = true;
 
     //refer to the side note in inside the event listener for the ready btn 
@@ -346,14 +346,12 @@ rockBtn.addEventListener('click', () => {
     player.changeSelection('r');
     roundRes1.innerHTML = "Hit.";
     roundRes2.innerHTML = null;
-    if (!playerPicked){
     tablesCard.innerHTML = tCard + Math.ceil(Math.random()*8);
     tCard = ++tablesCard.innerHTML;
     playerSum.innerHTML = tCard + pCard - 1;
     pSum = ++playerSum.innerHTML;
-    playerPicked = true;
+    //playerPicked = true;
     opponentPicked = false;
-    }
     if (pSum > 21){
         roundOver();
     }
@@ -367,7 +365,7 @@ scissorBtn.addEventListener('click', () => {
 		'addAction',
 		`Round #${round}: ${player.username} stayed.`
 	);
-    playerPicked = false;
+    //playerPicked = false;
     player.ready = true;
     //removes all the buttons such that they can't be used if the player is ready
     //side note, there are several aways to accomplish this, though i picked this one as it works in the case of the game and the purpose of "removing them"
@@ -461,4 +459,4 @@ socket.on('actionFound', async (action) => {
 	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
 	opponent.ready = true;
 });
-//resetRound();
+resetRound();
