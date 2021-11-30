@@ -95,14 +95,14 @@ class Player{
 
     draw(){
         ctx.beginPath();
-
+        
         if(this.currentSelected=='r'){
             ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         }        
         else{//or 's'
             ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         }
-
+        ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         ctx.fill();
     }
 
@@ -140,7 +140,7 @@ class Opponent{
         else{//or 's'
             ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         }
-
+        ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         ctx.fill();
     }
     
@@ -336,7 +336,7 @@ function resetRound(){
     cardDrawStartTime = 1;
     opponentPicked = false;//temp
     round++;
-	startGame(currentLobby);
+	startGime(currentLobby);
     roundOver = false;
 }
 
@@ -375,7 +375,7 @@ scissorBtn.addEventListener('click', () => {
     scissorBtn.style.display="none";
 });
 
-async function startGame() {
+async function startGime() {
 	let player1, player2;
 	if (!isOpponent){
 		player1 = currentLobby.players[0];
@@ -385,7 +385,7 @@ async function startGame() {
 		player1 = currentLobby.players[1];
 		player2 = currentLobby.players[0];
 	}
-	
+	resetRound();
 	player.username = player1.username;
 	opponent.username = player2.username;
 	pNameEl.innerHTML = player1.username;
@@ -433,7 +433,7 @@ socket.on('lobbyFilled', async (lobby) => {
 	currentLobby = lobby;
 	// Start the game!
 	// Player entered first!
-	startGame(currentLobby);
+	startGime(currentLobby);
 });
 
 socket.on('joinedSuccessfully', async (lobby) => {
@@ -442,7 +442,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 	const player2 = currentLobby.players[1];
 	if (!player2) {
 		//then "this" joined as the player1
-		this.player.username = player.username;
+		player.username = player.username;
 		pNameEl.innerHTML = player.username;
 		//start a loop in app.js that looks for when player2 joins
 		socket.emit('waitUntilFull', currentLobby._id);
@@ -451,7 +451,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		// Start the game!
 		// Player entered second!
 		isOpponent = true;
-		startGame(currentLobby);
+		startGime(currentLobby);
 	}
 	currentLobby = lobby;
 	socket.emit('addAction', player.username + ' joined the lobby.');

@@ -22,7 +22,7 @@
 </style>
 
 <div style="position: fixed; margin-left: 2%; margin-top: 5%;height: 100%; font-size: 2rem; display: flex; flex-direction: column; align-items: center;">
-    <h1 style="color: teal">P1's hand</h1>
+    <h1 style="color: teal" id="pNameEl">P1's hand</h1>
     <p style="color: red;font-size: 5rem; margin: 50 0 4 0; font-weight: 600;"><span id="pCard">0</span></p>
     <p style="color:cyan; font-size: 4rem; margin: 50 0 4 0; margin-top: 70%; font-weight: 600;"><span id="pSum"></span></p> 
     <p id ="roundResult1" style="position: fixed; margin-top: 25%; color: white; font-size: 2rem;"></p>
@@ -35,7 +35,7 @@
 </div>
 
 <div style="position: fixed; right: 0; margin-right: 2%; margin-top: 5%; font-size: 2rem; display: flex; flex-direction: column; align-items: center;">
-    <h1 style="color: teal">P2's hand</h1>
+    <h1 style="color: teal" id="oNameEl">P2's hand</h1>
     <p style="color: red; font-size: 5rem; margin: 50 0 4 0; font-weight: 600;"><span id="oCard">0</span></p>
     <p style="color:cyan; font-size: 4rem; margin: 50 0 4 0; margin-top: 70%; font-weight: 600;"><span id="oSum"></span></p>
     <span><p id="opponentsPick" style="color: white; font-size: 2rem; margin-bottom: 0; padding-bottom: 0;"></p></span>
@@ -55,5 +55,5 @@
 
 <canvas id="canvasbjack"></canvas>
 <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
-
+<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
 <script src="bjack.js"></script>
