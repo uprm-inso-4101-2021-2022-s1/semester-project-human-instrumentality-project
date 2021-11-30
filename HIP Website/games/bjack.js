@@ -459,4 +459,4 @@ socket.on('actionFound', async (action) => {
 	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
 	opponent.ready = true;
 });
-resetRound();
+//resetRound();
