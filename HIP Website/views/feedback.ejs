@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+	<%- include('partials/nav.ejs', {title:"Feedback"}) %>
+	<body>
+		<form
+			action="/feedback"
+			style="border: 1px solid #ccc"
+			method="post"
+		>
+	
+		<h1>Leave your feedback!</h1>
+		<label for="game" style="color: #366d6f"><b>Game</b></label>
+		<input
+		  style="border-radius: 5px"
+		  type="text"
+		  placeholder="Enter Game Name"
+		  name="game"
+		  required
+		/>
+		<label for="feedback" style="color: #366d6f"><b>Feedback</b></label>
+		<input
+		  style="border-radius: 5px"
+		  type="text"
+		  placeholder="Leave your feedback!"
+		  name="feedback"
+		  required
+		/>
+	
+		</form>
+	</body>
+</html>

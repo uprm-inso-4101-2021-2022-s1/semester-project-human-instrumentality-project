@@ -276,6 +276,10 @@ app.get('/faq', async (req, res) => {
 	redirectToPageWithHeader(req, res, 'faq');
 });
 
+app.get('/feedback', async (req, res) => {
+	redirectToPageWithHeader(req, res, 'feedback');
+});
+
 app.get('/forgotPassword', async (req, res) => {
 	redirectToPageWithHeader(req, res, 'forgotPassword');
 });
@@ -330,6 +334,8 @@ app.post('/register', async (req, res) => {
 		res.send('Internal server error');
 	}
 });
+
+app.post('/feedback', async (req, res) => {});
 
 app.post('/loginAsGuest', async (req, res) => {
 	const id = Date.now();
