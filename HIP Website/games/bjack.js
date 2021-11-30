@@ -441,8 +441,8 @@ socket.on('joinedSuccessfully', async (lobby) => {
 	const player2 = currentLobby.players[1];
 	if (!player2) {
 		//then "this" joined as the player1
-		player.username = player.username;
-		pNameEl.innerHTML = player.username;
+		player.username = player1.username;
+		pNameEl.innerHTML = player1.username;
 		//start a loop in app.js that looks for when player2 joins
 		socket.emit('waitUntilFull', currentLobby._id);
 	} else {
