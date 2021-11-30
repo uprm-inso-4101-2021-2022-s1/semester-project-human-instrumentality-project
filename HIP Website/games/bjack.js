@@ -343,6 +343,7 @@ function resetRound(){
 
 //listeners for the buttons
 rockBtn.addEventListener('click', () => {
+    if(opponentPicked){
     player.changeSelection('r');
     roundRes1.innerHTML = "Hit.";
     roundRes2.innerHTML = null;
@@ -353,8 +354,9 @@ rockBtn.addEventListener('click', () => {
     //playerPicked = true;
     opponentPicked = false;
     if (pSum > 21){
-        roundOver();
+        roundOver = true;
     }
+}
 });
 
 scissorBtn.addEventListener('click', () => {
@@ -457,6 +459,11 @@ socket.on('joinedSuccessfully', async (lobby) => {
 
 socket.on('actionFound', async (action) => {
 	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
+    if(action === 'r'){
+    opponentPicked = true;
+    }
+	if(action === 's'){
 	opponent.ready = true;
+	}
 });
 //resetRound();
