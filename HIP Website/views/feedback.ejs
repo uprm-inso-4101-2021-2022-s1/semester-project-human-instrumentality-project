@@ -1,31 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 	<%- include('partials/nav.ejs', {title:"Feedback"}) %>
+	<!-- Font Awesome Icon Library -->
+	<link
+		rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+	/>
+	<style>
+		.checked {
+			color: orange;
+		}
+
+		textarea {
+			resize: none;
+			border-radius: 5px;
+			width: 500px;
+			height: 100px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
 	<body>
-		<form
-			action="/feedback"
-			style="border: 1px solid #ccc"
-			method="post"
-		>
-	
-		<h1>Leave your feedback!</h1>
-		<label for="game" style="color: #366d6f"><b>Game</b></label>
-		<input
-		  style="border-radius: 5px"
-		  type="text"
-		  placeholder="Enter Game Name"
-		  name="game"
-		  required
-		/>
-		<label for="feedback" style="color: #366d6f"><b>Feedback</b></label>
-		<input
-		  style="border-radius: 5px"
-		  type="text"
-		  placeholder="Leave your feedback!"
-		  name="feedback"
-		  required
-		/>
-	
-		</form>
+		<div class="form_container" style="margin-top: 5%">
+			<form action="/feedback" method="post">
+				<div class="container">
+					<h1
+						style="
+							color: #366d6f;
+							text-align: center;
+							font-size: 3rem;
+						"
+					>
+						Leave your Feedback
+					</h1>
+					<br />
+					<label for="game" style="color: #366d6f"
+						><b>Game Name</b></label
+					>
+					<input
+						id="gameName"
+						style="border-radius: 5px"
+						type="text"
+						placeholder="Enter Game Name"
+						name="game"
+						required
+					/>
+
+					<br /><br />
+					<label for="rating" style="color: #366d6f"
+						><b>Feedback</b></label
+					><br />
+					<textarea id="feedback" name="feed" required></textarea>
+
+					<br />
+					<br />
+
+					<label
+						for="rating"
+						style="color: #366d6f"
+						id="ratingVisual"
+						name="ratingVisual"
+						><b>Rating: 1 Star</b></label
+					>
+
+					<input type="hidden" id="rating" name="rating" value="1"/>
+
+					<span
+						id="s1"
+						class="fa fa-star checked"
+						onclick="updateStars(1)"
+					></span>
+					<span
+						id="s2"
+						class="fa fa-star"
+						onclick="updateStars(2)"
+					></span>
+					<span
+						id="s3"
+						class="fa fa-star"
+						onclick="updateStars(3)"
+					></span>
+					<span
+						id="s4"
+						class="fa fa-star"
+						onclick="updateStars(4)"
+					></span>
+					<span
+						id="s5"
+						class="fa fa-star"
+						onclick="updateStars(5)"
+					></span>
+
+					<br />
+					<br />
+					<input type="checkbox" name="anonymous" checked="checked" />
+					<label style="color: white">Submit Anonymously</label>
+					<br />
+
+					<button type="submit" class="login_register_btn">
+						Submit
+					</button>
+					<br />
+				</div>
+			</form>
+		</div>
+		<script>
+			function updateStars(stars) {
+				for (let i = 5; i > 0; i--) {
+					let id = `s${i.toString()}`;
+					let star = document.getElementById(id);
+					star.className =
+						i <= stars ? 'fa fa-star checked' : 'fa fa-star';
+				}
+
+
+				document.getElementById('ratingVisual').innerHTML = `<b>Rating: ${stars} Star${
+					stars === 1 ? '' : 's'
+				}</b>`;
+				document.getElementById('rating').value = stars;
+			}
+		</script>
 	</body>
 </html>
