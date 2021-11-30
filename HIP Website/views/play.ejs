@@ -1,79 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('partials/nav.ejs', {title:"Play"}) %>
-  <body>
-    <form action="action_page.php" style="border: 1px solid #ccc">
-      <div class="container">
-        <h1 style="color: white">Game Library</h1>
-        <br />
-
-        <p style="color: white">
-          The Game Library will include the following games:
-        </p>
-        <hr />
-
-        <dl style="color: Red">
-          <span style="color: White; font-size: 24px">
-            <p>
-              <a
-                href="../games/rps.html"
-                style="color: #356788"
-                >Rock Paper Scissors</a
-              >
-            </p>
-            <dd style="font-size: 16px">
-              -Fast-paced, decision-making game. The luckiest player wins!
-            </dd>
-            <p>
-              <a
-                href="https://playtictactoe.org/"
-                target="_blank"
-                style="color: #356788"
-                >Tic-Tac-Toe</a
-              >
-            </p>
-            <dd style="font-size: 16px">
-              -Outwit the opponent in this simple yet strategic board game!
-            </dd>
-            <p>
-              <a
-                href="https://www.hangmanwords.com/play"
-                target="_blank"
-                style="color: #356788"
-                >Hangman</a
-              >
-            </p>
-            <dd style="font-size: 16px">
-              -Guess the letters that make a random word. First one to decypher
-              it wins!
-            </dd>
-            <p>
-              <a
-                href="https://www.youtube.com/watch?v=4w2icYjruEY"
-                target="_blank"
-                style="color: #356788"
-                >Picture Poker</a
-              >
-            </p>
-            <dd style="font-size: 16px">
-              -Poker on simple and unlimited deck for all sorts of
-              possibilities!
-            </dd>
-            <p>
-              <a
-                href="../games/bjack.html"
-                target="_blank"
-                style="color: #356788"
-                >Blackjack</a
-              >
-            </p>
-            <dd style="font-size: 16px">
-              -Get lucky by drawing a set of cards closest to 21, but don't
-              exceed it!
-            </dd>
-          </span>
-        </dl>
-      </div>
-    </form>
-  </body>
+	<%- include('partials/nav.ejs', {title:"Play"}) %>
+	<body>
+		<form action="action_page.php" style="border: 1px solid #ccc">
+			<div class="container">
+				<h1 style="color: white">Game Library</h1>
+				<br />
+				<hr />
+				<dl style="color: Red">
+					<span style="color: White; font-size: 24px">
+						<p>
+							<a href="../games/rps.html" style="color: #356788"
+								>Rock Paper Scissors</a
+							>
+						</p>
+						<dd style="font-size: 16px">
+							-Fast-paced, decision-making game. The luckiest
+							player wins!
+						</dd>
+						<p>
+							<a
+								href="https://playtictactoe.org/"
+								target="_blank"
+								style="color: #356788"
+								>Tic-Tac-Toe</a
+							>
+						</p>
+						<dd style="font-size: 16px">
+							-Outwit the opponent in this simple yet strategic
+							board game!
+						</dd>
+						<p>
+							<a
+								href="https://www.hangmanwords.com/play"
+								target="_blank"
+								style="color: #356788"
+								>Hangman</a
+							>
+						</p>
+						<dd style="font-size: 16px">
+							-Guess the letters that make a random word. First
+							one to decypher it wins!
+						</dd>
+						<p>
+							<a
+								href="https://www.youtube.com/watch?v=4w2icYjruEY"
+								target="_blank"
+								style="color: #356788"
+								>Picture Poker</a
+							>
+						</p>
+						<dd style="font-size: 16px">
+							-Poker on simple and unlimited deck for all sorts of
+							possibilities!
+						</dd>
+						<p>
+							<a href="../games/bjack.html" style="color: #356788"
+								>Blackjack</a
+							>
+						</p>
+						<dd style="font-size: 16px">
+							-Get lucky by drawing a set of cards closest to 21,
+							but don't exceed it!
+						</dd>
+					</span>
+				</dl>
+			</div>
+			<a
+				href="/feedback"
+				style="color: #367588; text-align: left; text-decoration: unset"
+				><h4>Leave Feedback</h4></a
+			>
+		</form>
+	</body>
 </html>

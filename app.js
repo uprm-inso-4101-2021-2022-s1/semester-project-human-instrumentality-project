@@ -13,6 +13,7 @@ const database = require('./models/db');
 const app = express();
 const server = http.createServer(app);
 const User = require('./models/user');
+let feedback;
 
 //----------------------EVERYTHING RELATED TO THE LOBBIES-----------------------------
 //(These could maybe be moved to a different file eventually to avoid having such a big "app.js")
@@ -276,6 +277,10 @@ app.get('/faq', async (req, res) => {
 	redirectToPageWithHeader(req, res, 'faq');
 });
 
+app.get('/feedback', async (req, res) => {
+	redirectToPageWithHeader(req, res, 'feedback');
+});
+
 app.get('/forgotPassword', async (req, res) => {
 	redirectToPageWithHeader(req, res, 'forgotPassword');
 });
@@ -329,6 +334,25 @@ app.post('/register', async (req, res) => {
 	} catch {
 		res.send('Internal server error');
 	}
+});
+
+app.post('/feedback', async (req, res) => {
+	let { game, feed, rating, anonymous } = req.body;
+	let ratingString = "";
+	const username = (anonymous && sess) ? 'Anonymous' : sess.username;
+	for (let i = 1; i < 6; i++){
+		ratingString += (i <= rating)? "★" : "☆"
+	}
+
+	await feedback.insertOne({
+		_id: Date.now(),
+		User: username,
+		Rating: ratingString,
+		Game: game,
+		Feedback: feed,
+	});
+
+	res.redirect('/feedbackSuccessful.html');
 });
 
 app.post('/loginAsGuest', async (req, res) => {
@@ -400,7 +424,13 @@ server.listen(3000, async function () {
 		//gets the lobbies child collection from the database
 		lobbies = client.db('HIP-DIB').collection('lobbies');
 		console.log('connected to the HIP-DIB lobbies collection'); //debugging purposes
+
+		feedback = client.db('HIP-DIB').collection('feedback');
+		console.log('connected to the HIP-DIB feedback collection'); //debugging purposes
 	} catch (e) {
 		console.log(e);
 	}
+	/*
+	It was like any other day ☀️. I log into my favorite website: 👓HIP Games 👓, and entered to play some RPS 🪨📃✂️. Then I ran into "Kaponte", who started calling 📲 me very offensive names like "Roblom" 🤖 and "Sussy Baka" 😑. I couldn't believe what I was hearing 👂😠! And then he asked me if I liked chairs and I was like "😳😳😳". Never coming back. 🚪🚶
+	*/
 });
