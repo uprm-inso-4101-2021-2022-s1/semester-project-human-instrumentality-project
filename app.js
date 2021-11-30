@@ -179,7 +179,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('removeAction', async (id, action) => {
 		console.log(action);
-		lobbies.updateOne({ _id: id }, { $pull: { actions: action } });
+		await lobbies.updateOne({ _id: id }, { $pull: { actions: action } });
 	});
 
 	socket.on('disconnect', (socket) => {

@@ -24,6 +24,7 @@ let totalTurns;
 const boxes = document.getElementsByClassName('box');
 
 const actionTrigger = 'chose';
+const resetTrigger = 'reset';
 
 //resets the game
 function resetGame() {
@@ -111,9 +112,13 @@ function enableBoxClickListeners(enable) {
 function enableReset(enable) {
 	let resetButton = getElement('reset');
 	if (!enable) {
-		resetButton.removeEventListener('click', resetGame);
+		resetButton.removeEventListener('click', function () {
+			socket.emit('addAction', resetTrigger);
+		});
 	} else {
-		resetButton.addEventListener('click', resetGame);
+		resetButton.addEventListener('click', function () {
+			socket.emit('addAction', resetTrigger);
+		});
 	}
 }
 
@@ -180,91 +185,97 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		startGame();
 	}
 	socket.emit('addAction', name + ' joined the lobby.');
-	currentLobby = lobby;
 });
 
 socket.on('actionFound', async (action) => {
-	// Grab the chosen box
-	let box = boxes[action.substring(action.lastIndexOf('#') + 1)];
-
-	//adds x or o for the current play in their chosen box
-	box.innerHTML = currentPlayer.symbol;
-
-	//changes total turns count
-	totalTurns++;
-	//checks 3 matching x's or o's
-	if (
-		boxes[0].innerHTML == boxes[1].innerHTML &&
-		boxes[1].innerHTML == boxes[2].innerHTML &&
-		boxes[0].innerHTML.trim() != ''
-	) {
-		showWinner(0, 1, 2);
-	} else if (
-		boxes[3].innerHTML == boxes[4].innerHTML &&
-		boxes[4].innerHTML == boxes[5].innerHTML &&
-		boxes[3].innerHTML.trim() != ''
-	) {
-		showWinner(3, 4, 5);
-	} else if (
-		boxes[6].innerHTML == boxes[7].innerHTML &&
-		boxes[7].innerHTML == boxes[8].innerHTML &&
-		boxes[6].innerHTML.trim() != ''
-	) {
-		showWinner(6, 7, 8);
-	} else if (
-		boxes[0].innerHTML == boxes[3].innerHTML &&
-		boxes[3].innerHTML == boxes[6].innerHTML &&
-		boxes[0].innerHTML.trim() != ''
-	) {
-		showWinner(0, 3, 6);
-	} else if (
-		boxes[1].innerHTML == boxes[4].innerHTML &&
-		boxes[4].innerHTML == boxes[7].innerHTML &&
-		boxes[1].innerHTML.trim() != ''
-	) {
-		showWinner(1, 4, 7);
-	} else if (
-		boxes[2].innerHTML == boxes[5].innerHTML &&
-		boxes[5].innerHTML == boxes[8].innerHTML &&
-		boxes[2].innerHTML.trim() != ''
-	) {
-		showWinner(2, 5, 8);
-	} else if (
-		boxes[0].innerHTML == boxes[4].innerHTML &&
-		boxes[4].innerHTML == boxes[8].innerHTML &&
-		boxes[0].innerHTML.trim() != ''
-	) {
-		showWinner(0, 4, 8);
-	} else if (
-		boxes[2].innerHTML == boxes[4].innerHTML &&
-		boxes[4].innerHTML == boxes[6].innerHTML &&
-		boxes[2].innerHTML.trim() != ''
-	) {
-		showWinner(2, 4, 6);
-	}
-	//verify if it's a draw
-	else if (totalTurns == 9) {
-		drawGame();
+	if (action.includes(resetTrigger)) {
+		resetGame();
 	} else {
-		// If an action is found, we just need to changes player turns
-		currentPlayer = currentPlayer == player1 ? player2 : player1;
-		// Render the correct message
-		if (
-			(currentPlayer == player2 && isPlayer2) ||
-			(currentPlayer == player1 && !isPlayer2)
-		) {
-			enableBoxClickListeners(true);
-			getElement(
-				'turn'
-			).innerHTML = `${currentPlayer.username}. It is your turn`;
-		} else {
-			// It's the other players turn!
-			getElement(
-				'turn'
-			).innerHTML = `Waiting for ${currentPlayer.username}'s play`;
-			enableBoxClickListeners(false);
-		}
+		await socket.emit('removeAction', currentLobby._id, action);
+		player1 = currentLobby.players[0];
+		player2 = currentLobby.players[1];
+		// Grab the chosen box
+		let box = boxes[action.substring(action.lastIndexOf('#') + 1)];
 
-		socket.emit('waitForAction', currentLobby._id, actionTrigger);
+		//adds x or o for the current play in their chosen box
+		box.innerHTML = currentPlayer.symbol;
+
+		//changes total turns count
+		totalTurns++;
+		//checks 3 matching x's or o's
+		if (
+			boxes[0].innerHTML == boxes[1].innerHTML &&
+			boxes[1].innerHTML == boxes[2].innerHTML &&
+			boxes[0].innerHTML.trim() != ''
+		) {
+			showWinner(0, 1, 2);
+		} else if (
+			boxes[3].innerHTML == boxes[4].innerHTML &&
+			boxes[4].innerHTML == boxes[5].innerHTML &&
+			boxes[3].innerHTML.trim() != ''
+		) {
+			showWinner(3, 4, 5);
+		} else if (
+			boxes[6].innerHTML == boxes[7].innerHTML &&
+			boxes[7].innerHTML == boxes[8].innerHTML &&
+			boxes[6].innerHTML.trim() != ''
+		) {
+			showWinner(6, 7, 8);
+		} else if (
+			boxes[0].innerHTML == boxes[3].innerHTML &&
+			boxes[3].innerHTML == boxes[6].innerHTML &&
+			boxes[0].innerHTML.trim() != ''
+		) {
+			showWinner(0, 3, 6);
+		} else if (
+			boxes[1].innerHTML == boxes[4].innerHTML &&
+			boxes[4].innerHTML == boxes[7].innerHTML &&
+			boxes[1].innerHTML.trim() != ''
+		) {
+			showWinner(1, 4, 7);
+		} else if (
+			boxes[2].innerHTML == boxes[5].innerHTML &&
+			boxes[5].innerHTML == boxes[8].innerHTML &&
+			boxes[2].innerHTML.trim() != ''
+		) {
+			showWinner(2, 5, 8);
+		} else if (
+			boxes[0].innerHTML == boxes[4].innerHTML &&
+			boxes[4].innerHTML == boxes[8].innerHTML &&
+			boxes[0].innerHTML.trim() != ''
+		) {
+			showWinner(0, 4, 8);
+		} else if (
+			boxes[2].innerHTML == boxes[4].innerHTML &&
+			boxes[4].innerHTML == boxes[6].innerHTML &&
+			boxes[2].innerHTML.trim() != ''
+		) {
+			showWinner(2, 4, 6);
+		}
+		//verify if it's a draw
+		else if (totalTurns == 9) {
+			drawGame();
+		} else {
+			// If an action is found, we just need to changes player turns
+			currentPlayer = currentPlayer == player1 ? player2 : player1;
+			// Render the correct message
+			if (
+				(currentPlayer == player2 && isPlayer2) ||
+				(currentPlayer == player1 && !isPlayer2)
+			) {
+				enableBoxClickListeners(true);
+				getElement(
+					'turn'
+				).innerHTML = `${currentPlayer.username}. It is your turn`;
+			} else {
+				// It's the other players turn!
+				getElement(
+					'turn'
+				).innerHTML = `Waiting for ${currentPlayer.username}'s play`;
+				enableBoxClickListeners(false);
+			}
+
+			await socket.emit('waitForAction', currentLobby._id, actionTrigger);
+		}
 	}
 });
