@@ -1,3 +1,5 @@
+//const { name } = require("ejs");
+
 const socket = io('http://localhost:3000', { autoConnect: true });
 const canvas = document.getElementById('canvasbjack');
 const ctx = canvas.getContext('2d');
@@ -150,8 +152,8 @@ class Opponent{
 }
 
 let table1 = new Table(canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
-let player = new Player(canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
-let opponent = new Opponent(canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14);
+let player = new Player('', canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
+let opponent = new Opponent('', canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14);
 
 let pScore = 0;
 let oScore = 0;
@@ -440,8 +442,8 @@ socket.on('joinedSuccessfully', async (lobby) => {
 	const player2 = currentLobby.players[1];
 	if (!player2) {
 		//then "this" joined as the player1
-		player.username = player1.username;
-		pNameEl.innerHTML = player1.username;
+		this.player.username = player.username;
+		pNameEl.innerHTML = player.username;
 		//start a loop in app.js that looks for when player2 joins
 		socket.emit('waitUntilFull', currentLobby._id);
 	} else {
@@ -460,4 +462,4 @@ socket.on('actionFound', async (action) => {
 	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
 	opponent.ready = true;
 });
-resetRound();
+//resetRound();
