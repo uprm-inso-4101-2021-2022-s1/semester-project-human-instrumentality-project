@@ -57,11 +57,11 @@
 		margin-right: auto;
 	}
 </style>
-
+<title>HIP Website -- Tic Tac Toe</title>
 <div class="container-out">
 	<div class="container-in">
 		<div class="table-container">
-			<p>Player <span id="player">X</span> your turn</p>
+			<p id="turn"></p>
 			<table class="center">
 				<tr>
 					<th><div class="box"></div></th>
@@ -88,4 +88,10 @@
 </div>
 
 <canvas id="canvastictactoe"></canvas>
+<script
+	src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+	integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+	crossorigin="anonymous"
+></script>
+<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
 <script src="tictactoe.js"></script>
