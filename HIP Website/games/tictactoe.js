@@ -2,17 +2,18 @@ const canvas = document.getElementById('canvastictactoe');
 const socket = io('http://localhost:3000', { autoConnect: true });
 
 let player = { username: '', symbol: 'O' };
-let opponent = { username: '', symbol: 'x' };
+let player2 = { username: '', symbol: 'x' };
 
 //stores player turns
 let currentPlayer;
 
-let isOpponent;
+let gameStatus;
+
+let isPlayer2;
 let currentLobby;
 
 let actionTrigger = 'chose';
 let resetTrigger = 'reset';
-
 
 //counts the times a player has played a turn
 let totalTurns = 0;
@@ -40,10 +41,10 @@ for (let i = 0; i < boxes.length; i++) {
 			gameStatus == 'Game On' &&
 			currentPlayer == player
 		) {
+			console.log(i);
 			socket.emit(
 				'addAction',
-				currentLobby._id,
-				`${currentPlayer.username} ${actionTrigger} box: ${i}`
+				`${currentPlayer.username} ${actionTrigger} box#${i}`
 			);
 		}
 	});
@@ -55,16 +56,27 @@ document.getElementById('reset').addEventListener('click', function () {
 });
 
 function resetGame() {
+	if (gameStatus === 'Game On') return;
 	for (let i = 0; i < boxes.length; i++) {
 		boxes[i].innerHTML = '';
 		boxes[i].style.backgroundColor = '#dee9ec';
 		boxes[i].style.color = 'black';
 	}
-	currentPlayer = player;
-	gameStatus = "Game On";
+	currentPlayer = isPlayer2 ? player2 : player;
+	gameStatus = 'Game On';
 	document.getElementById('message').style.display = 'none';
 	document.getElementById('drawResult').style.display = 'none';
 	socket.emit('waitForAction', currentLobby._id, actionTrigger);
+
+	if (!isPlayer2) {
+		document.getElementById(
+			'turn'
+		).innerHTML = `${currentPlayer.username}, it is your turn`;
+	} else {
+		document.getElementById(
+			'turn'
+		).innerHTML = `Waiting for ${currentPlayer.username} to play`;
+	}
 }
 
 //displays the winner
@@ -88,13 +100,16 @@ function drawGame() {
 }
 
 function startGame() {
-	if (!isOpponent) {
+	if (!isPlayer2) {
 		player = currentLobby.players[0];
-		opponent = currentLobby.players[1];
+		player2 = currentLobby.players[1];
 	} else {
 		player = currentLobby.players[1];
-		opponent = currentLobby.players[0];
+		player2 = currentLobby.players[0];
 	}
+
+	console.log(player);
+	console.log(player2);
 
 	resetGame();
 }
@@ -118,7 +133,7 @@ socket.on('noLobbyFound', async () => {
 socket.on('lobbyFound', async (lobby) => {
 	currentLobby = lobby;
 	console.log('Found lobby: ' + currentLobby);
-	socket.emit('joinLobby', currentLobby._id, player);
+	socket.emit('joinLobby', currentLobby._id, player2);
 });
 
 // A lobby was creatted successfully, join it!
@@ -132,22 +147,24 @@ socket.on('createLobbySuccess', async (lobby) => {
 socket.on('failedToJoin', async (lobby) => {});
 
 socket.on('lobbyFilled', async (lobby) => {
+	currentLobby = lobby;
 	// Only player 1 will reach here
 	startGame();
 });
 
 socket.on('joinedSuccessfully', async (lobby) => {
 	currentLobby = lobby;
-	const player1 = currentLobby.players[0];
-	const player2 = currentLobby.players[1];
-	if (!player2) {
+	const tmpplayer1 = currentLobby.players[0];
+	const tmpplayer2 = currentLobby.players[1];
+	if (!tmpplayer2) {
 		// They are player1;
-		player = player1;
+		player = tmpplayer1;
 		document.getElementById(
 			'turn'
 		).innerHTML = `Waiting for player2 to join...`;
 		await socket.emit('waitUntilFull', currentLobby._id);
 	} else {
+		isPlayer2 = true
 		startGame();
 	}
 
@@ -156,13 +173,19 @@ socket.on('joinedSuccessfully', async (lobby) => {
 
 socket.on('actionFound', async (action) => {
 	if (action.includes(resetTrigger)) {
+		resetGame();
 	} else {
 		await socket.emit('removeAction', currentLobby._id, action);
 		//adds x or o for the current play in their chosen box
-		boxes[i].innerHTML = currentPlayer.symbol;
+		boxes[
+			parseInt(action.substring(action.lastIndexOf('#') + 1))
+		].innerHTML = currentPlayer.symbol;
 
 		//changes player turns
-		currentPlayer = currentPlayer == player ? opponent : player;
+		currentPlayer = currentPlayer == player ? player2 : player;
+		setTimeout(function () {
+			// Wait 1 second
+		}, 1000);
 
 		//changes total turns count
 		totalTurns++;
@@ -193,6 +216,6 @@ socket.on('actionFound', async (action) => {
 			drawGame();
 		}
 
-		socket.emit('waitForAction', currentLobby._id, actionTrigger);
+		await socket.emit('waitForAction', currentLobby._id, actionTrigger);
 	}
 });
