@@ -430,7 +430,4 @@ server.listen(3000, async function () {
 	} catch (e) {
 		console.log(e);
 	}
-	/*
-	It was like any other day ☀️. I log into my favorite website: 👓HIP Games 👓, and entered to play some RPS 🪨📃✂️. Then I ran into "Kaponte", who started calling 📲 me very offensive names like "Roblom" 🤖 and "Sussy Baka" 😑. I couldn't believe what I was hearing 👂😠! And then he asked me if I liked chairs and I was like "😳😳😳". Never coming back. 🚪🚶
-	*/
 });
