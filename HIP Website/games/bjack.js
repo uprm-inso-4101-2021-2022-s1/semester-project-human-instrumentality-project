@@ -1,5 +1,3 @@
-//const { name } = require("ejs");
-
 const canvas = document.getElementById('canvasbjack');
 const ctx = canvas.getContext('2d');
 

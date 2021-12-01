@@ -46,7 +46,11 @@ function resetGame() {
 	// Turn on the boxes for player 1 only
 	enableBoxClickListeners(!isPlayer2);
 
-	socket.emit('waitForAction', currentLobby._id, actionTrigger);
+	socket.emit(
+		'waitForAction',
+		currentLobby._id,
+		`${currentTurn}${actionTrigger}`
+	);
 }
 
 function getElement(id) {
@@ -82,7 +86,7 @@ function boxClickListener(box, number) {
 	if (box.innerHTML.trim() == '' && gameStatus == 'Game On') {
 		socket.emit(
 			'addAction',
-			`${currentPlayer.username} ${actionTrigger} box #${number}`
+			`${currentPlayer.username} ${currentTurn}${actionTrigger} box #${number}`
 		);
 	}
 }
@@ -191,7 +195,7 @@ socket.on('actionFound', async (action) => {
 	if (action.includes(resetTrigger)) {
 		resetGame();
 	} else {
-		await socket.emit('removeAction', currentLobby._id, action);
+		socket.emit('removeAction', currentLobby._id, action);
 		player1 = currentLobby.players[0];
 		player2 = currentLobby.players[1];
 		// Grab the chosen box
@@ -275,7 +279,11 @@ socket.on('actionFound', async (action) => {
 				enableBoxClickListeners(false);
 			}
 
-			await socket.emit('waitForAction', currentLobby._id, actionTrigger);
+			await socket.emit(
+				'waitForAction',
+				currentLobby._id,
+				`${currentTurn}${actionTrigger}`
+			);
 		}
 	}
 });
