@@ -43,7 +43,7 @@ for (let i = 0; i < boxes.length; i++) {
 			socket.emit(
 				'addAction',
 				currentLobby._id,
-				`${currentPlayer.username} ${actionTrigger} box: ${i}`
+				`${currentPlayer.username} ${actionTrigger} box#${i}`
 			);
 		}
 	});
@@ -159,7 +159,7 @@ socket.on('actionFound', async (action) => {
 	} else {
 		await socket.emit('removeAction', currentLobby._id, action);
 		//adds x or o for the current play in their chosen box
-		boxes[i].innerHTML = currentPlayer.symbol;
+		boxes[parseInt(action.substring(action.lastIndexOf('#') + 1))].innerHTML = currentPlayer.symbol;
 
 		//changes player turns
 		currentPlayer = currentPlayer == player ? opponent : player;
