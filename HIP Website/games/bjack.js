@@ -1,4 +1,5 @@
-const socket = io('http://localhost:3000', { autoConnect: true });
+//const { name } = require("ejs");
+
 const canvas = document.getElementById('canvasbjack');
 const ctx = canvas.getContext('2d');
 
@@ -39,10 +40,6 @@ const roundRes1 = document.getElementById('roundResult1');
 const roundRes2 = document.getElementById('roundResult2');
 const nextRoundEl = document.getElementById('nextRoundElement');
 
-//names
-const pNameEl = document.getElementById('pNameEl');
-const oNameEl = document.getElementById('oNameEl');
-
 //Table class
 class Table{
     constructor(x,y,width,height){
@@ -71,8 +68,7 @@ class Table{
 }
 //player class
 class Player{
-    constructor(name,x,y,width,height){
-        this.username = name;
+    constructor(x,y,width,height){
         this.x = x;
         this.y = y;
         this.width = width;
@@ -93,14 +89,14 @@ class Player{
 
     draw(){
         ctx.beginPath();
-
+        
         if(this.currentSelected=='r'){
             ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         }        
         else{//or 's'
             ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         }
-
+        ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         ctx.fill();
     }
 
@@ -111,8 +107,7 @@ class Player{
 
 
 class Opponent{
-    constructor(name,x,y,width,height){
-        this.username = name;
+    constructor(x,y,width,height){
         this.x = x;
         this.y = y;
         this.width = width;
@@ -122,7 +117,7 @@ class Opponent{
     }
 
     update(){
-        opponent.draw();
+        opponent1.draw();
         this.x = canvas.width - canvas.width/5.5;
         this.y = canvas.height/3.75;
         this.width = canvas.width/14;
@@ -138,7 +133,7 @@ class Opponent{
         else{//or 's'
             ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         }
-
+        ctx.drawImage(scissorImg,this.x,this.y,this.width*2,this.height*2);
         ctx.fill();
     }
     
@@ -151,7 +146,7 @@ class Opponent{
 
 let table1 = new Table(canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
 let player = new Player(canvas.width/8,canvas.height/4,canvas.width/14,canvas.width/14);
-let opponent = new Opponent(canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14);
+let opponent1 = new Opponent(canvas.width-canvas.width/4, canvas.height/4,canvas.width/14,canvas.width/14);
 
 let pScore = 0;
 let oScore = 0;
@@ -168,45 +163,42 @@ let cardDrawStartTime = 1;
 let animationId;
 let countDownTimerId;
 let playerPicked = false;
-let opponentPicked = false;//temp
+let opponentPicked = true;//temp
 
-let currentLobby;
-let isOpponent = false;
-let round = 1;
 
 function animate(){
     
     //CPU Example
-    // if(!opponentPicked && playerPicked && !player.ready){
-    //     setTimeout(() => {
-    //         if(oSum <= 17){
-    //             opponentPicked = true;
-    //             roundRes2.innerHTML = "Hit.";
-    //             roundRes1.innerHTML = null;
-    //             opponentSum.innerHTML = tCard + oCard - 1;
-    //             oSum = ++opponentSum.innerHTML;
-    //            }
-    //            else {
-    //             opponent.ready = true;
-    //             roundRes2.innerHTML = "Stay.";
-    //             roundRes1.innerHTML = null;   
-    //            } 
-    //         playerPicked = false;
-    //     }, 1000);//1s
-    // }else if (player.ready && !playerPicked){
-    //     setTimeout(() => {
-    //         if(oSum <= 17){
-    //             tablesCard.innerHTML = tCard + Math.ceil(Math.random()*8);
-    //             tCard = ++tablesCard.innerHTML;
-    //             opponentSum.innerHTML = tCard + oCard - 1;
-    //             oSum = ++opponentSum.innerHTML;
-                
-    //            }
-    //            else {
-    //             opponent.ready = true;   
-    //            } 
-    //     }, 1000);//1s
-    // }
+    if(opponentPicked && !player.ready){
+        setTimeout(() => {
+            if(oSum <= 17){
+                roundRes2.innerHTML = "Hit.";
+                roundRes1.innerHTML = null;
+                opponentSum.innerHTML = tCard + oCard - 1;
+                oSum = ++opponentSum.innerHTML;
+                opponentPicked = false;
+               }
+               else {
+                roundRes2.innerHTML = "Stay.";
+                roundRes1.innerHTML = null;   
+                opponent1.ready = true;
+                opponentPicked = false;
+               } 
+            playerPicked = true;
+        }, 1000);//1s
+    }else if (player.ready && !playerPicked){
+        setTimeout(() => {
+            if(oSum <= 17){
+                tablesCard.innerHTML = tCard + Math.ceil(Math.random()*8);
+                tCard = ++tablesCard.innerHTML;
+                opponentSum.innerHTML = tCard + oCard - 1;
+                oSum = ++opponentSum.innerHTML;
+               }
+               else {
+                opponent1.ready = true;   
+               } 
+        }, 1000);//1s
+    }
 
     canvas.width = innerWidth;
     canvas.height = innerHeight;   
@@ -217,7 +209,7 @@ function animate(){
 
     table1.update();
     player.update();
-    opponent.update();
+    opponent1.update();
 
     if(roundOver){
         if(pScore == 3){
@@ -235,21 +227,18 @@ function animate(){
             }
         }
         else{
+            rockBtn.style.display="none";
+            scissorBtn.style.display="none";
             nextRoundEl.innerHTML = "Next round in " + nextRoundCountDown + "...";
             if(nextRoundCountDown <= 0){
                 resetRound();
             }
         }
-        opponent.draw();
+        opponent1.draw();
     }
     
-    if (opponent.username == '') {
-		opponentPickElement.innerHTML = 'Waiting on opponent to join...';
-	} else if (!opponent.ready) {
-		opponentPickElement.innerHTML = 'Picking...';
-	} else if (!player.ready && opponent.ready) {
-		opponentPickElement.innerHTML = 'Picked!';
-	} else if (player.ready && opponent.ready && !roundOver) {
+
+	if (player.ready && opponent1.ready && !roundOver) {
 		opponentPickElement.innerHTML = null;
 		pickRoundkWinnerAndUdpateScore();
         roundOverCountDown();//calls the countdown only once since it has an interval in the inside!
@@ -280,6 +269,7 @@ function pickRoundkWinnerAndUdpateScore(){
 
 
 function roundOverCountDown(){
+    player.ready = false;
     countDownTimerId = setInterval(() => {
         nextRoundCountDown--;
     },1000);//every second it ticks down the counter (1000 ms)
@@ -290,10 +280,10 @@ function roundOverCountDown(){
 function resetRound(){
     player.changeSelection('r');
     player.ready = false; 
-    opponent.changeSelection('r');
-    opponent.ready = false;
+    opponent1.changeSelection('r');
+    opponent1.ready = false;
 
-    playerPicked = false;
+    playerPicked = true;
     opponentPicked = true;
 
     //refer to the side note in inside the event listener for the ready btn 
@@ -333,131 +323,40 @@ function resetRound(){
     nextRoundCountDown = 5;//this line and the one above are not interchangeable**
     cardDrawStartTime = 1;
     opponentPicked = false;//temp
-    round++;
-	startGame(currentLobby);
     roundOver = false;
 }
 
 
 //listeners for the buttons
 rockBtn.addEventListener('click', () => {
+    if(playerPicked){
     player.changeSelection('r');
     roundRes1.innerHTML = "Hit.";
     roundRes2.innerHTML = null;
-    if (!playerPicked){
     tablesCard.innerHTML = tCard + Math.ceil(Math.random()*8);
     tCard = ++tablesCard.innerHTML;
     playerSum.innerHTML = tCard + pCard - 1;
     pSum = ++playerSum.innerHTML;
-    playerPicked = true;
-    opponentPicked = false;
-    }
     if (pSum > 21){
-        roundOver();
+        player.ready = true;
+        opponent1.ready = true;
     }
+    playerPicked = false;
+    opponentPicked = true;
+}
 });
 
 scissorBtn.addEventListener('click', () => {
     player.changeSelection('s');
     roundRes1.innerHTML = "Stay.";
     roundRes2.innerHTML = null;
-    socket.emit(
-		'addAction',
-		`Round #${round}: ${player.username} stayed.`
-	);
-    playerPicked = false;
-    player.ready = true;
     //removes all the buttons such that they can't be used if the player is ready
     //side note, there are several aways to accomplish this, though i picked this one as it works in the case of the game and the purpose of "removing them"
     rockBtn.style.display="none";
     scissorBtn.style.display="none";
+    playerPicked = false;
+    player.ready = true;
 });
 
-async function startGame() {
-	let player1, player2;
-	if (!isOpponent){
-		player1 = currentLobby.players[0];
-		player2 = currentLobby.players[1];
-	}
-	else{
-		player1 = currentLobby.players[1];
-		player2 = currentLobby.players[0];
-	}
-	
-	player.username = player1.username;
-	opponent.username = player2.username;
-	pNameEl.innerHTML = player1.username;
-	oNameEl.innerHTML = player2.username;
-	let action = `Round #${round}: ${opponent.username} stayed.`;
-	console.log(action);
-
-	// Wait for the opponent to shoot
-	await socket.emit('waitForAction', currentLobby._id, action);
-}
-
-// When the user connects, join an available lobby!
-// Emits either 'noLobbyFound', or 'lobbyFound'
-socket.on('connect', async () => {
-	console.log('Someone connected!');
-	socket.emit('findAvailableLobby', 'BJack');
-});
-
-// Create a lobby if none is found.
-// Emits 'createLobbySuccess' on creation
-socket.on('noLobbyFound', async () => {
-	console.log('No lobby found. Creating new lobby');
-	socket.emit('createLobby', Date.now(), 'BJack', 2);
-});
-
-// A vacant lobby was found. Join it!
-// Emits 'joinedSuccessfully' or 'failedToJoin'
-socket.on('lobbyFound', async (lobby) => {
-	currentLobby = lobby;
-	console.log('Found lobby: ' + currentLobby);
-	socket.emit('joinLobby', currentLobby._id, player);
-});
-
-// A lobby was creatted successfully, join it!
-// Emits 'joinedSuccessfully' or 'failedToJoin'
-socket.on('createLobbySuccess', async (lobby) => {
-	currentLobby = lobby;
-	console.log('Lobby created successfully!');
-	socket.emit('joinLobby', currentLobby._id, player);
-});
-
-socket.on('failedToJoin', async (lobby) => {});
-
-socket.on('lobbyFilled', async (lobby) => {
-	currentLobby = lobby;
-	// Start the game!
-	// Player entered first!
-	startGame(currentLobby);
-});
-
-socket.on('joinedSuccessfully', async (lobby) => {
-	currentLobby = lobby;
-	const player1 = currentLobby.players[0];
-	const player2 = currentLobby.players[1];
-	if (!player2) {
-		//then "this" joined as the player1
-		player.username = player1.username;
-		pNameEl.innerHTML = player1.username;
-		//start a loop in app.js that looks for when player2 joins
-		socket.emit('waitUntilFull', currentLobby._id);
-	} else {
-		//then "this" joined as the player2
-		// Start the game!
-		// Player entered second!
-		isOpponent = true;
-		startGame(currentLobby);
-	}
-	currentLobby = lobby;
-	socket.emit('addAction', player.username + ' joined the lobby.');
-	animate();
-});
-
-socket.on('actionFound', async (action) => {
-	opponent.changeSelection(action.substring(action.lastIndexOf(':') + 1));
-	opponent.ready = true;
-});
 resetRound();
+animate();
