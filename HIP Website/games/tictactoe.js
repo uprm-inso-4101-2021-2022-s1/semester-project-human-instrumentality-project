@@ -41,7 +41,6 @@ for (let i = 0; i < boxes.length; i++) {
 			gameStatus == 'Game On' &&
 			currentPlayer == player
 		) {
-			console.log(i);
 			socket.emit(
 				'addAction',
 				`${currentPlayer.username} ${actionTrigger} box#${i}`
@@ -177,9 +176,7 @@ socket.on('actionFound', async (action) => {
 	} else {
 		await socket.emit('removeAction', currentLobby._id, action);
 		//adds x or o for the current play in their chosen box
-		boxes[
-			parseInt(action.substring(action.lastIndexOf('#') + 1))
-		].innerHTML = currentPlayer.symbol;
+		boxes[parseInt(action.substring(action.lastIndexOf('#') + 1))].innerHTML = currentPlayer.symbol;
 
 		//changes player turns
 		currentPlayer = currentPlayer == player ? player2 : player;
