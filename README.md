@@ -11,12 +11,6 @@ Use the package manager [npm](https://www.npmjs.com/) to install all the require
 npm install bcrypt body-parser cookie-parser express express-session ejs mongodb nodemon mongoose cors socket.io
 ```
 
-## Place Holder
-
-```
-Code Goes Here
-```
-
 ## Presentations
 Here are some presentations which document the development progress in a simple manner.
 
