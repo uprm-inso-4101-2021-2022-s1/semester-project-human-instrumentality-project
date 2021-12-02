@@ -202,7 +202,7 @@ socket.on('actionFound', async (action) => {
 	//checks 3 matching x's or o's
 	checkAndDisplayWinner(0, 1, 2);
 	checkAndDisplayWinner(3, 4, 5);
-	checkAndDisplayWinner(6, 7, 8); 
+	checkAndDisplayWinner(6, 7, 8);
 	checkAndDisplayWinner(0, 3, 6);
 	checkAndDisplayWinner(1, 4, 7);
 	checkAndDisplayWinner(2, 5, 8);
@@ -214,9 +214,11 @@ socket.on('actionFound', async (action) => {
 		drawGame();
 	}
 
-	await socket.emit(
-		'waitForAction',
-		currentLobby._id,
-		`turn${totalTurns}${actionTrigger}`
-	);
+	if (gameStatus === 'Game On') {
+		await socket.emit(
+			'waitForAction',
+			currentLobby._id,
+			`turn${totalTurns}${actionTrigger}`
+		);
+	}
 });
