@@ -14,14 +14,15 @@
         border-radius: 5px;
         font-size: x-large;
         font-weight: 900;
-        height: 20%;
-        width: 20%;
+        height: 10%;
+        width: 10%;
         margin: 5;
         padding: 5;   
         text-align: center;    
+        position: relative;
     }
     button#ready{
-        width: 40%;
+        width: 20%;
         background-color: royalblue;
     }
     button#ready:hover{
@@ -32,8 +33,8 @@
     }
 
     #tinder4{
-    background-color:rgb(78, 76, 76);
-    display: inline-block;
+        background-color:rgb(78, 76, 76);
+        display: inline-block;
     }
 
     #turnCounter{
@@ -79,12 +80,18 @@
 
     
 <div>
-    <h4 id="turnCounter">It's <span id="player"> username</span>'s turn!</h4> 
-    <div id="tinder4"></div>    
-    <button id="restart">Restart?</button>
-    <button id="ready">Ready</button>
-    <h1 style="color: teal" id="pNameEl">You</h1>
-    <h1 style="color: teal" id="oNameEl">Opponent</h1>
+    <h4 id="turnCounter">It's <span id="player"> teal</span>'s turn!</h4> 
+    <div id="tinder4"><span></span></div>   
+    <div>
+        <button id="ready">Ready</button>
+    </div>
+    <div>
+        <button id="restart">Restart?</button>
+    </div> 
+
+    
+    
+   
 </div> 
 
 
@@ -93,7 +100,7 @@
 <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
 <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="Tinder4.js"></script>
+<script src="tinder4LogicWait.js"></script>
 
 
 
