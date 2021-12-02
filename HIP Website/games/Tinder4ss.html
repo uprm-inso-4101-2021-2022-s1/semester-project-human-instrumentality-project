@@ -1,94 +1,107 @@
-<html>
 
-    <style>
+<style>
 
-        body {
-            text-align: center;
-            background-color: rgb(26, 24, 24);
-            margin: 0;
-        }
-        button{
-            
-            background-color: lightseagreen;
-            color: white;
-            border-color: transparent;
-            border-radius: 5px;
-            font-size: x-large;
-            font-weight: 900;
-            height: 20%;
-            width: 20%;
-            margin: 5;
-            padding: 5;   
-            text-align: center;    
-        }
-        button#ready{
-            width: 40%;
-            background-color: royalblue;
-        }
-        button#ready:hover{
-            background-color: red;
-        }
-        button:hover{
-            background-color: teal;
-        }
-    
-        #tinder4{
+    body {
+        text-align: center;
+        background-color: rgb(26, 24, 24);
+        margin: 0;
+    }
+    button{
+        
+        background-color: lightseagreen;
+        color: white;
+        border-color: transparent;
+        border-radius: 5px;
+        font-size: x-large;
+        font-weight: 900;
+        height: 20%;
+        width: 20%;
+        margin: 5;
+        padding: 5;   
+        text-align: center;    
+        position: relative;
+    }
+    button#ready{
+        width: 20%;
+        background-color: royalblue;
+    }
+    button#ready:hover{
+        background-color: red;
+    }
+    button:hover{
+        background-color: teal;
+    }
+
+    #tinder4{
         background-color:rgb(78, 76, 76);
         display: inline-block;
-        }
+    }
 
-        #turnCounter{
-            color: white;
-            font-size: x-large;
-        }
-  
-        .col{
-            width: 70px;
-            height: 70px;
-            display: inline-block;
-            background-color:rgb(158, 153, 153);
-            border-radius: 25%;
-            margin: 5px;
-     }
+    #turnCounter{
+        color: white;
+        font-size: x-large;
+    }
 
-        .next-teal{
-            background-color: teal;
-        }
+    .col{
+        width: 70px;
+        height: 70px;
+        display: inline-block;
+        background-color:rgb(158, 153, 153);
+        border-radius: 25%;
+        margin: 5px;
+ }
 
-        .col.teal{
-            background-color: teal;
-        }
+    .next-teal{
+        background-color: teal;
+    }
 
-        .next-red{
-            background-color: rgb(194, 86, 86);
-        }
+    .col.teal{
+        background-color: teal;
+    }
 
-        .col.red{
-            background-color: rgb(194, 86, 86);
-        }
+    .next-red{
+        background-color: rgb(194, 86, 86);
+    }
 
-        .col.empty{
-            cursor: pointer;
-        }
-    </style>
+    .col.red{
+        background-color: rgb(194, 86, 86);
+    }
 
+    .col.empty{
+        cursor: pointer;
+    }
+</style>
 
-
-    <head>
-        <title>Tinder 4</title>
-        <link rel="stylesheet" hred="style.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="Tinder4Logic.js"></script>
-        <script src="Tinder4.js"></script>
-    </head>
-
-    <body>
+    <div>
+        <h1 style="color: white">Connect 4</h1>
+        <link rel="stylesheet" hred="style.css">   
         
-        <h4 id="turnCounter">It's <span id="player"> username</span>'s turn!</h4>
-        
-        <div id="tinder4"></div>
+    </div>
 
+    
+<div>
+    <h4 id="turnCounter">It's <span id="player"> teal</span>'s turn!</h4> 
+    <div id="tinder4"><span></span></div>   
+    <div>
         <button id="restart">Restart?</button>
-    </body>
+    </div> 
+    <div>
+        <button id="ready">Ready</button>
+    </div>
+    
+    
+    <h1 style="color: teal" id="pNameEl">You</h1>
+    <h1 style="color: teal" id="oNameEl">Opponent</h1>
+</div> 
 
-</html>
+
+
+<canvas id="canvasrps"></canvas>
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="tinder4LogicWait.js"></script>
+
+
+
+

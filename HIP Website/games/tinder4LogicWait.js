@@ -1,3 +1,20 @@
+
+$(document).ready(function() {
+    //TODO:
+    
+    const tinder4Logic = new Tinder4Logic('#tinder4')
+    
+    tinder4Logic.onPlayerMove = function() {
+        $('#player').text(tinder4Logic.player);
+    }
+
+    $('#restart').click(function(){
+        tinder4Logic.restart();
+    })
+
+
+    
+});
 class Tinder4Logic {
     constructor(selector){
         this.ROWS = 6;
