@@ -1,0 +1,107 @@
+
+<style>
+
+    body {
+        text-align: center;
+        background-color: rgb(26, 24, 24);
+        margin: 0;
+    }
+    button{
+        
+        background-color: lightseagreen;
+        color: white;
+        border-color: transparent;
+        border-radius: 5px;
+        font-size: x-large;
+        font-weight: 900;
+        height: 10%;
+        width: 10%;
+        margin: 5;
+        padding: 5;   
+        text-align: center;    
+        position: relative;
+    }
+    button#ready{
+        width: 20%;
+        background-color: royalblue;
+    }
+    button#ready:hover{
+        background-color: red;
+    }
+    button:hover{
+        background-color: teal;
+    }
+
+    #tinder4{
+        background-color:rgb(78, 76, 76);
+        display: inline-block;
+    }
+
+    #turnCounter{
+        color: white;
+        font-size: x-large;
+    }
+
+    .col{
+        width: 70px;
+        height: 70px;
+        display: inline-block;
+        background-color:rgb(158, 153, 153);
+        border-radius: 25%;
+        margin: 5px;
+ }
+
+    .next-teal{
+        background-color: teal;
+    }
+
+    .col.teal{
+        background-color: teal;
+    }
+
+    .next-red{
+        background-color: rgb(194, 86, 86);
+    }
+
+    .col.red{
+        background-color: rgb(194, 86, 86);
+    }
+
+    .col.empty{
+        cursor: pointer;
+    }
+</style>
+
+    <div>
+        <h1 style="color: white">Connect 4</h1>
+        <link rel="stylesheet" hred="style.css">   
+        
+    </div>
+
+    
+<div>
+    <h4 id="turnCounter">It's <span id="player"> teal</span>'s turn!</h4> 
+    <div id="tinder4"><span></span></div>   
+    <div>
+        <button id="ready">Ready</button>
+    </div>
+    <div>
+        <button id="restart">Restart?</button>
+    </div> 
+
+    
+    
+   
+</div> 
+
+
+
+<canvas id="canvasrps"></canvas>
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="tinder4.js"></script>
+
+
+
+
