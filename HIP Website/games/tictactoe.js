@@ -12,8 +12,7 @@ let gameStatus;
 let isPlayer2;
 let currentLobby;
 
-let actionTrigger = 'chose';
-let resetTrigger = 'reset';
+let actionTrigger = `chose`;
 
 //counts the times a player has played a turn
 let totalTurns = 0;
@@ -41,10 +40,9 @@ for (let i = 0; i < boxes.length; i++) {
 			gameStatus == 'Game On' &&
 			currentPlayer == player
 		) {
-			console.log(i);
 			socket.emit(
 				'addAction',
-				`${currentPlayer.username} ${actionTrigger} box#${i}`
+				`${currentPlayer.username} turn${totalTurns}${actionTrigger} box#${i}`
 			);
 		}
 	});
@@ -66,7 +64,11 @@ function resetGame() {
 	gameStatus = 'Game On';
 	document.getElementById('message').style.display = 'none';
 	document.getElementById('drawResult').style.display = 'none';
-	socket.emit('waitForAction', currentLobby._id, actionTrigger);
+	socket.emit(
+		'waitForAction',
+		currentLobby._id,
+		`turn${totalTurns}${actionTrigger}`
+	);
 
 	if (!isPlayer2) {
 		document.getElementById(
@@ -164,7 +166,7 @@ socket.on('joinedSuccessfully', async (lobby) => {
 		).innerHTML = `Waiting for player2 to join...`;
 		await socket.emit('waitUntilFull', currentLobby._id);
 	} else {
-		isPlayer2 = true
+		isPlayer2 = true;
 		startGame();
 	}
 
@@ -172,50 +174,49 @@ socket.on('joinedSuccessfully', async (lobby) => {
 });
 
 socket.on('actionFound', async (action) => {
-	if (action.includes(resetTrigger)) {
-		resetGame();
+	await socket.emit('removeAction', currentLobby._id, action);
+	//adds x or o for the current play in their chosen box
+	boxes[parseInt(action.substring(action.lastIndexOf('#') + 1))].innerHTML =
+		currentPlayer.symbol;
+
+	//changes player turns
+	currentPlayer = currentPlayer == player ? player2 : player;
+	setTimeout(function () {
+		// Wait 1 second
+	}, 1000);
+
+	//changes total turns count
+	totalTurns++;
+
+	//changes player's turn label on top of the game
+	if (currentPlayer == player) {
+		document.getElementById(
+			'turn'
+		).innerHTML = `${currentPlayer.username}, it is your turn`;
 	} else {
-		await socket.emit('removeAction', currentLobby._id, action);
-		//adds x or o for the current play in their chosen box
-		boxes[
-			parseInt(action.substring(action.lastIndexOf('#') + 1))
-		].innerHTML = currentPlayer.symbol;
-
-		//changes player turns
-		currentPlayer = currentPlayer == player ? player2 : player;
-		setTimeout(function () {
-			// Wait 1 second
-		}, 1000);
-
-		//changes total turns count
-		totalTurns++;
-
-		//changes player's turn label on top of the game
-		if (currentPlayer == player) {
-			document.getElementById(
-				'turn'
-			).innerHTML = `${currentPlayer.username}, it is your turn`;
-		} else {
-			document.getElementById(
-				'turn'
-			).innerHTML = `Waiting for ${currentPlayer.username} to play`;
-		}
-
-		//checks 3 matching x's or o's
-		checkAndDisplayWinner(1, 2, 3);
-		checkAndDisplayWinner(3, 4, 5);
-		checkAndDisplayWinner(6, 7, 8);
-		checkAndDisplayWinner(0, 3, 6);
-		checkAndDisplayWinner(1, 4, 7);
-		checkAndDisplayWinner(2, 5, 8);
-		checkAndDisplayWinner(0, 4, 8);
-		checkAndDisplayWinner(2, 4, 6);
-
-		//verify if it's a draw
-		if (totalTurns == 9) {
-			drawGame();
-		}
-
-		await socket.emit('waitForAction', currentLobby._id, actionTrigger);
+		document.getElementById(
+			'turn'
+		).innerHTML = `Waiting for ${currentPlayer.username} to play`;
 	}
+
+	//checks 3 matching x's or o's
+	checkAndDisplayWinner(0, 1, 2);
+	checkAndDisplayWinner(3, 4, 5);
+	checkAndDisplayWinner(6, 7, 8);
+	checkAndDisplayWinner(0, 3, 6);
+	checkAndDisplayWinner(1, 4, 7);
+	checkAndDisplayWinner(2, 5, 8);
+	checkAndDisplayWinner(0, 4, 8);
+	checkAndDisplayWinner(2, 4, 6);
+
+	//verify if it's a draw
+	if (totalTurns == 9) {
+		drawGame();
+	}
+
+	await socket.emit(
+		'waitForAction',
+		currentLobby._id,
+		`turn${totalTurns}${actionTrigger}`
+	);
 });
