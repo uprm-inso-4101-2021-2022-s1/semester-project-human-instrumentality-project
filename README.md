@@ -8,7 +8,7 @@ Use the package manager [npm](https://www.npmjs.com/) to install all the require
 
 ```bash
 
-npm install bcrypt body-parser cookie-parser express express-session ejs mongodb nodemon mongoose cors socket.io
+npm install bcrypt body-parser cookie-parser express express-session ejs mongodb nodemon mongoose cors socket.io jquery
 ```
 
 ## Presentations
